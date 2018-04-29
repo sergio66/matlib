@@ -29,7 +29,23 @@ if narginx == 4
                              %% ~/MATLABCODE/RTPMAKE/CLUST_RTPMAKE/CLUSTMAKE_ERA_CLOUD_NADIR/clustbatch_make_eracloudrtp_nadir_sarta_filelist.m
 
   run_sarta.cfrac               = -1;  %% use random cfracs (instead of fixed fractions set by run_sarta.cfrac > 0)
-  run_sarta.ice_water_separator = -1;  %% do not separate out ciwc and clwc by pressure; ie believe the NWP are correct
+
+%{
+  run_sarta.ice_water_separator = -1;  %% DEFAULT = -1, use ciwc/clwc structures as ISCCP ie ice above 440 mb, water below 440 mb
+                                       %% do NOT call convert_ice_water_separator + cloud_combine_main_code uses 440 mb
+  run_sarta.ice_water_separator = 0;   %% do not separate out ciwc and clwc by pressure; ie believe the NWP are correct
+                                       %% do not call convert_ice_water_separator + cloud_combine_main_code does nothing				       
+  run_sarta.ice_water_separator = +1;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+                                       %% do not call convert_ice_water_separator + cloud_combine_main_code uses Y1 mb
+				       
+  run_sarta.ice_water_separator = +2;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+                                       %% do      call convert_ice_water_separator + cloud_combine_main_code uses Y1 mb  
+  run_sarta.ice_water_separator = +440;%% or similar [100 -- 1000] ... basically ame as DEFAULT = -1, use ciwc/clwc structures as ISCCP ice/water divide at X mb
+                                       %% do     call convert_ice_water_separator + cloud_combine_main_code uses X mb
+%}				       
+  run_sarta.ice_water_separator = -1;  %% DEFAULT = -1, use ciwc/clwc structures as ISCCP ie ice above 440 mb, water below 440 mb
+                                       %% do NOT call convert_ice_water_separator + cloud_combine_main_code uses 440 mb
+				       
   run_sarta.randomCpsize        = +1;  %% keep randomizing dme for ice and water
   run_sarta.co2ppm              = 385;
   run_sarta.ForceNewSlabs       = -1;  %% keep slab clouds that are found as they are
@@ -153,9 +169,41 @@ elseif h.ptype ~= 0
   error('driver_pcrtm_cloud_rtp.m requires LEVELS profiles (h.ptype = 0)');
 end
 
-if run_sarta.ice_water_separator > 0
-  disp('>>>>>>>> warning : setting SEPARATOR for ice and water .... initializing')
-  p = convert_ice_water_separator(p,run_sarta.ice_water_separator);
+
+disp('>>>>>>>> warning : setting SEPARATOR for ice and water .... initializing')
+fprintf(1,'  run_sarta.ice_water_separator = %4i \n',run_sarta.ice_water_separator);
+if run_sarta.ice_water_separator == -1
+  disp('    default ice_water_separator, NO conversion of the CIWC/CLWC profiles at this stage')
+elseif run_sarta.ice_water_separator == 0
+  disp('    ice_water_separator = 0, NO conversion of the CIWC/CLWC profiles at this stage')
+elseif run_sarta.ice_water_separator == +1
+  disp('    ice_water_separator = 1, NO conversion of the CIWC/CLWC profiles at this stage')
+elseif run_sarta.ice_water_separator == +2
+  disp('    ice_water_separator = 1, YES conversion of the CIWC/CLWC profiles at this stage')
+  % +2 : use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[-90:5:+90];Y1=polyval(P,X1); according to IPCC AR5 Ch 7, Fig 7.5
+  X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=p.rlat; Y1=polyval(P,X1);
+  for ii = 1 : length(p.stemp)
+    plevs = p.plevs(:,ii);
+    if ~isfield(p,'palts')
+      palts = p2h(plevs);
+    else
+      palts = p.palts(:,ii);
+    end
+    boo = find(isfinite(plevs) & isfinite(palts));
+    pSEPARATE = interp1(palts(boo),log(plevs(boo)),1000*Y1(ii));
+    pSEPARATE = exp(pSEPARATE);
+    if pSEPARATE < 440
+      pSEPARATE = 440;   %% else the cut off at the tropics is too high
+    end    
+    Y1(ii) = pSEPARATE;
+  end    
+  p = convert_ice_water_separator(p,Y1);
+elseif run_sarta.ice_water_separator > 100
+  disp('    ice_water_separator > 100, YES conversion of the CIWC/CLWC profiles at this stage')
+  Y1 = max(440,run_sarta.ice_water_separator) * ones(size(p.stemp));
+  p = convert_ice_water_separator(p,Y1);
+else
+  error('need run_sarta.ice_water_separator = -1,0,+1,+2 or > 100')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

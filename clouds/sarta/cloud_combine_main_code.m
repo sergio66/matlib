@@ -23,20 +23,38 @@ end
 
 [cT,cB,cOUT,cngwat,cTYPE,iFound] = combine_clouds(...
             iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,profX.plevs(:,ii),airslevels,airsheights);
+iTT = iT; if length(iTT) == 0; iTT = -1; end
+iBB = iB; if length(iBB) == 0; iBB = -1; end
+wTT = wT; if length(wTT) == 0; wTT = -1; end
+wBB = wB; if length(wBB) == 0; wBB = -1; end
+%fprintf(1,'>>>> here 1 ii iT wT cT iB wB cB = %5i %4i %4i %4i %4i %4i %4i \n',ii,iTT,wTT,cT(1),iBB,wBB,cB(1))
 
-if (length(cTYPE) >= 1)
-  for kk = 1 : length(cTYPE)
-    if cTYPE(kk) == 'I' & plevs(cT(kk)) > 440
-      cT(kk) = cut440 - 10;
-      if iPrint > 0
-        disp('warning had to reset ICE cloudtop, to make it less than 440 mb');
-      end
-    elseif cTYPE(kk) == 'W' & plevs(cT(kk)) < 440
-      cT(kk) = cut440 + 1;
-      cB(kk) = cB(kk)+3;
-      if iPrint > 0	
-        disp('warning had to reset WATER cloudtop, to make it more than 440 mb');
+%% p440 and cut440 come from new_style_smooth_cc_ciwc_clwc_to_water_ice_profile
+if p440 < 1013
+  %% if ice_water_separator == 0 then p440 = 9999 since we do not want any changing
+  if (length(cTYPE) >= 1)
+    for kk = 1 : length(cTYPE)
+      if cTYPE(kk) == 'I' & plevs(cT(kk)) > p440
+        cT(kk) = cut440 - 10;
+        if iPrint > 0
+          fprintf(1,'warning had to reset ICE cloudtop, to make it less than %8.3 mb \n',p440)
+        end
+      elseif cTYPE(kk) == 'W' & plevs(cT(kk)) < p440
+        cT(kk) = cut440 + 1;
+        %cB(kk) = cB(kk)+3;
+        if cB(kk) < cT(kk)
+          cB(kk) = cT(kk) + 3;
+        end
+        if iPrint > 0
+          fprintf(1,'warning had to reset WATER cloudtop, to make it more than %8.3 mb \n',p440)      
+        end
       end
     end
   end
 end
+
+iTT = iT; if length(iTT) == 0; iTT = -1; end
+iBB = iB; if length(iBB) == 0; iBB = -1; end
+wTT = wT; if length(wTT) == 0; wTT = -1; end
+wBB = wB; if length(wBB) == 0; wBB = -1; end
+%fprintf(1,'>>>> here 2 ii iT wT cT iB wB cB = %5i %4i %4i %4i %4i %4i %4i \n',ii,iTT,wTT,cT(1),iBB,wBB,cB(1))

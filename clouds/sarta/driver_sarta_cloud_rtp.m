@@ -50,19 +50,33 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %                                         if redoing slabs, this is THE most important variable!!!!
 %     run_sarta.clear               = +/-1 for yes/no, results into prof.clearcalc (DEFAULT -1)
 %     run_sarta.cloud               = +/-1 for yes/no, results into prof.rcalc     (DEFAULT +1)
-%     run_sarta.cumsum = -1           : ORIG DEFAULT go with "ecmwf2sarta" results (default before March 2012), mean of ciwc/clwc "GeorgeAumann pick"
+%     run_sarta.cumsum = -1           : ORIG DEFAULT go with "ecmwf2sarta" results (default before March 2012), mean/centroid "C"  of ciwc/clwc "GeorgeAumann pick"
 %                        0 -- 1        : set cloud pressure based on cumulative sum of p.ciwc and p.clwc, 
 %                        >  1--9998    : go for where cumsum(cloudOD) ~ N/100 (if that can be found)
-%                        >= +9999      : NEW DEFAULT go for peak of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC) "Strow pick"
-%                        <= -9999      :             go for peak of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC)
+%                        >= +9999      : NEW DEFAULT go for peak "P" of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC) "Strow pick"
+%                        <= -9999      :             go for peak "P" of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC)
 %                                      :             differs from +9999 ice clouds are limited be 400 mb >= icetop >= 0 ("Strow pick" has 1000 mb > icetop > 0)
 %     run_sarta.cfrac < 0              : use random (DEFAULT)
 %                     > 0 to < 1       : use fixed amount specified by user
 %     run_sarta.klayers_code        = string to klayers
 %     run_sarta.sartaclear_code     = string to sarta clear executable
 %     run_sarta.sartacloud_code     = string to sarta cloud executable
-%     run_sarta.ice_water_separator = set all ciwc/clwc to ice above this, water below this 
-%                                     (DEFAULT = -1, use ciwc/clwc structures as is)
+%     run_sarta.ice_water_separator = set all ciwc/clwc to ice above this, water below this
+%                                   = -1;  %% DEFAULT = -1, DO NOT CALL convert_ice_water_separator, used since 2010(???) onwards
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below 440 mb
+%                                   = 0;   %% do not separate out ciwc and clwc by pressure; ie believe the NWP are correct
+%                                                           do NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses nothing
+%                                   = +1;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   >>>>>>> these first alter the ciwc and clwc profiles <<<<<<<<<
+%                                   = +2;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   = +440;%% or similar [100 -- 1000] ... almost same as DEFAULT = -1, but
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below X mb
 %     run_sarta.randomCpsize        = +1 (DEFAULT) to randomize BOTH ice (based on Tcld) and water deff
 %                                   = 20,   then water is ALWAYS 20 um (as in PCRTM wrapper),random ice
 %                                           (based on Tcld)
@@ -101,6 +115,10 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 % Written by Sergio DeSouza-Machado (with a lot of random cloud frac and dme by Scott Hannon)
 %
 % updates
+%  04/27/2014 : introduced run_sarta.ice_water_separator +1,+2 option, which is
+%               quadratic as fcn of latitude separator, acording to IPCC AR5 report (Ch 7, Fig 7.5)
+%               X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[-90:5:+90];Y1=polyval(P,X1);
+%               above certain pressure = ice      below certain pressure = water
 %  03/06/2017 : introduce run_sarta.iNew_or_Orig_CXWC2OD : -1 (default) is to do OD = blah * qBlah / cc * diffZ                   almost PCRTM way
 %                                                        : 0  is to do OD = blah * qBlah / cc * diffZ and then OD(cc < 1e-3) = 0  PCRTM way
 %                                                        : +1 is to do OD = blah * qBlah * cc * diffZ                             SERGIO way

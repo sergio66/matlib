@@ -1,4 +1,4 @@
-function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airsheights);
+function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airsheights,ice_water_separator);
 
 %% called by readecmwf91_grid/nearest_gasNcloud.m
 %%     "nlev" is set by readecmwf91_grid/nearest_gasNcloud
@@ -66,11 +66,11 @@ for iiiiA = 1:length(iiii)
 
   if iMakeIceWaterCld == -1
     [watercld,icecld,plevs] = old_style_smooth_cc_ciwc_clwc_to_water_ice_profile(xcumsum,profX,ii,nlev,iSmooth,rGaussianCutoff);
-    aa        = [];
-    ptemp     = [];
-    cutoff440 = [];    
+    aa     = [];
+    ptemp  = [];
+    cut440 = [];    
   else
-    [watercld,icecld,plevs,aa,ptemp,cut440] = new_style_smooth_cc_ciwc_clwc_to_water_ice_profile(xcumsum,profX,aa,ii);
+    [watercld,icecld,plevs,aa,ptemp,cut440,p440] = new_style_smooth_cc_ciwc_clwc_to_water_ice_profile(xcumsum,profX,ice_water_separator,aa,ii);
   end
   
   [wOUT,wT,wB,wPeak,wN,wmaxN,wminN] = boxshape(watercld,rGaussianCutoff); newwater = wOUT;
@@ -85,10 +85,27 @@ for iiiiA = 1:length(iiii)
     fprintf(1,' processed %5i of %5i in %8.6f minutes\n',iiiiA,length(iiii),tnow/60);
   end
 
+%plot(profX.ciwc(:,ii),profX.plevs(:,ii),'bx-',profX.clwc(:,ii),profX.plevs(:,ii),'ro-',watercld,plevs,'g')
+%[plevs(wT) plevs(wB)]
+%cut440
+%disp('lkjdkjhdljkdh')
+%keyboard_nowindow
+
   cloud_combine_main_code
-  
   prof = put_into_prof(prof,profX,ii,jj,plevs,ptemp,iLevsVers,...
                        cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airsheights);
+
+%{
+if ii == 21
+  plot(profX.ciwc(:,ii),profX.plevs(:,ii),'rx-',profX.clwc(:,ii),profX.plevs(:,ii),'bo-',watercld,plevs,'g')
+  [plevs(wT) plevs(wB)]
+  cut440
+  figure(1); clf; print_ecmwfcld2sartacld
+  figure(2); clf; plot_ecmwfcld2sartacld
+  disp('ii = 21 in ecmwfcld2sartacld.m')
+  keyboard_nowindow
+end
+%}
 
   if iPrint > 0
     print_ecmwfcld2sartacld

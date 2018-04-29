@@ -1,7 +1,10 @@
-function [y1,y2] = compare_slabVSprofile(p,ii1,ii2,figno)
+function [y1,y2] = compare_slabVSprofile(p,ii1,ii2,figno,mrORod)
 
 %% this script assume you have profile "p" and allows you to compare slab vs cloud for water and ice, for the ii1-th and ii2-th fovs
 
+if nargin < 5
+  mrORod = +1;  %% use CIWC/CLWC
+end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin == 3
@@ -18,6 +21,14 @@ ice_prof   = p.ciwc(1:nlev,ii);  % in g/g
 water_prof = p.clwc(1:nlev,ii);  % in g/g
 cc_prof    = p.cc(1:nlev,ii);    % 0 < cc < 1
 
+norm = 1e6;
+
+if isfield(p,'sarta_lvlODice') & isfield(p,'sarta_lvlODwater') & mrORod == -1
+  ice_prof   = p.sarta_lvlODice(:,ii);
+  water_prof = p.sarta_lvlODwater(:,ii);
+  norm = 10;
+end
+
 type1 = p.ctype(ii);
 type2 = p.ctype2(ii);
 
@@ -32,8 +43,6 @@ if type2 == 101
 elseif type2 == 201
   color2 = 'm';
 end
-
-norm = 1e6;
 
 h1 = subplot(121);
 
@@ -58,7 +67,6 @@ y1.cprbot     = p.cprbot(ii);
 y1.cngwat2     = p.cngwat2(ii)/norm;
 y1.cprtop2     = p.cprtop2(ii);
 y1.cprbot2     = p.cprbot2(ii);
-
 
 if p.cngwat(ii) > 0
   line([0 p.cngwat(ii)/norm],[p.cprtop(ii) p.cprtop(ii)],'color',color1)
@@ -86,7 +94,11 @@ set(gca,'ydir','reverse');
 hl = legend('water','ice');
 set(hl,'fontsize',12)
 
-xlabel('mixing ratio g/g','fontsize',10); 
+if isfield(p,'sarta_lvlODice') & isfield(p,'sarta_lvlODwater')  & mrORod == -1
+  xlabel('OD','fontsize',10);
+else
+  xlabel('mixing ratio g/g','fontsize',10);
+end  
 ylabel('pressure (mb)','fontsize',10)
 %set(gca,'fontsize',10)
 
@@ -94,6 +106,7 @@ hx = axis;
 axis([hx(1) hx(2) 100 1000]);
 
 set(gca,'fontsize',10)
+%set(gca,'xscale','log'); %set(gca,'yscale','log')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ii = ii2;
@@ -103,6 +116,14 @@ p_prof = p.plevs(1:nlev,ii);
 ice_prof   = p.ciwc(1:nlev,ii);  % in g/g
 water_prof = p.clwc(1:nlev,ii);  % in g/g
 cc_prof    = p.cc(1:nlev,ii);    % 0 < cc < 1
+
+norm = 1e6;
+
+if isfield(p,'sarta_lvlODice') & isfield(p,'sarta_lvlODwater') & mrORod == -1
+  ice_prof   = p.sarta_lvlODice(:,ii);
+  water_prof = p.sarta_lvlODwater(:,ii);
+  norm = 10;
+end
 
 type1 = p.ctype(ii);
 type2 = p.ctype2(ii);
@@ -119,8 +140,6 @@ elseif type2 == 201
   color2 = 'm';
 end
 
-norm = 1e6;
-
 h2 = subplot(122);
 
 xice   = ice_prof;   xice   = cumsum(xice);
@@ -132,7 +151,7 @@ plot(water_prof,p_prof,'b',...
 
 plot(water_prof,p_prof,'b',...
      ice_prof,p_prof,'r','linewidth',2);
-
+     
 y2.water_prof = water_prof;
 y2.ice_prof   = ice_prof;
 y2.plevs      = p_prof;
@@ -172,7 +191,11 @@ set(gca,'ydir','reverse');
 hl = legend('water','ice');
 set(hl,'fontsize',12)
 
-xlabel('mixing ratio g/g','fontsize',10); 
+if isfield(p,'sarta_lvlODice') & isfield(p,'sarta_lvlODwater') & mrORod == -1
+  xlabel('OD','fontsize',10);
+else
+  xlabel('mixing ratio g/g','fontsize',10);
+end  
 ylabel('pressure (mb)','fontsize',10)
 %set(gca,'fontsize',10)
 
@@ -180,4 +203,12 @@ hx = axis;
 axis([hx(1) hx(2) 100 1000]);
 
 set(gca,'fontsize',10)
+%set(gca,'xscale','log'); %set(gca,'yscale','log')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if isfield(p,'watertop') & isfield(p,'icetop') & isfield(p,'waterbot') & isfield(p,'icebot')
+  wah = [ii1 p.ctype(ii1) p.icetop(ii1) p.icebot(ii1) p.ctype2(ii1) p.watertop(ii1) p.waterbot(ii1)];
+  fprintf(1,'prof %5i   cloudtype1 %3i top/bot %8.6f %8.6f   cloudtype2 %3i top/bot %8.6f %8.6f  \n',wah);
+  wah = [ii2 p.ctype(ii2) p.icetop(ii2) p.icebot(ii2) p.ctype2(ii2) p.watertop(ii2) p.waterbot(ii2)];
+  fprintf(1,'prof %5i   cloudtype1 %3i top/bot %8.6f %8.6f   cloudtype2 %3i top/bot %8.6f %8.6f  \n',wah);
+end

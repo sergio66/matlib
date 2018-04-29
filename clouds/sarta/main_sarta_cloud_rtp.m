@@ -23,6 +23,21 @@ function prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,narginx)
 %     run_sarta.sartacloud_code     = string to sarta cloud executable
 %     run_sarta.ice_water_separator = set all ciwc/clwc to ice above this, water below this 
 %                                     (DEFAULT = -1, use ciwc/clwc structures as is)
+%                                   = -1;  %% DEFAULT = -1, DO NOT CALL convert_ice_water_separator, used since 2010(???) onwards
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below 440 mb
+%                                   = 0;   %% do not separate out ciwc and clwc by pressure; ie believe the NWP are correct
+%                                                           do NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses nothing
+%                                   = +1;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   >>>>>>> these first alter the ciwc and clwc profiles <<<<<<<<<
+%                                   = +2;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   = +440;%% or similar [100 -- 1000] ... almost same as DEFAULT = -1, but
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below X mb
 %     run_sarta.randomCpsize        = +1 (DEFAULT) to randomize BOTH ice (based on Tcld) and water deff
 %                                     20,   then water is ALWAYS 20 um (as in PCRTM wrapper), random ice
 %                                           (based on Tcld)
@@ -98,8 +113,18 @@ addpath([base_dir2 '/h4tools'])
 
 pINPUT = p;
 
-%% defaults
-check_sarta_cloud_rtp_defaults
+%% defaults HAVE ALREADY BEEN CHECKED in driver_sarta_cloud_rtp.m
+%% check_sarta_cloud_rtp_defaults << removed this in Apr 2018
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%% we need these from check_sarta_cloud_rtp_defaults
+iDebugMain = +1;  %% yes debug keyboards
+iDebugMain = -1;  %% no debug keyboards
+% Min allowed cloud fraction
+cmin = 0.0001;
+% Max allowed cngwat[1,2]
+cngwat_max = 500;
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% turn profiles into slabs
 main_code_to_make_slabs
@@ -108,5 +133,3 @@ main_compute_sarta_rads
 
 tnow = toc;
 fprintf(1,'TOTAL : %8.6f minutes to process \n',tnow/60);
-
- 

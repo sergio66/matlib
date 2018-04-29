@@ -19,8 +19,22 @@ function prof = driver_sarta_cloud100layer_rtp(h,ha,p,pa,run_sarta)
 %     run_sarta.klayers_code        = string to klayers
 %     run_sarta.sartaclear_code     = string to sarta clear executable
 %     run_sarta.sartacloud_code     = string to sarta cloud executable
-%     run_sarta.ice_water_separator = set all ciwc/clwc to ice above this, water below this 
-%        (default = -1, use ciwc/clwc structures as is)
+%     run_sarta.ice_water_separator = set all ciwc/clwc to ice above this, water below this
+%                                   = -1;  %% DEFAULT = -1, DO NOT CALL convert_ice_water_separator, used since 2010(???) onwards
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below 440 mb
+%                                   = 0;   %% do not separate out ciwc and clwc by pressure; ie believe the NWP are correct
+%                                                           do NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses nothing
+%                                   = +1;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO NOT CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   >>>>>>> these first alter the ciwc and clwc profiles <<<<<<<<<
+%                                   = +2;  %% use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[p.rlat];Y1=polyval(P,X1); according to IPCC AR5
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above Y1 mb, water below Y1 mb
+%                                   = +440;%% or similar [100 -- 1000] ... almost same as DEFAULT = -1, but
+%                                                           DO CALL convert_ice_water_separator
+%                                                           cloud_combine_main_code uses ISCCP ie ice above 440 mb, water below X mb
 %     run_sarta.randomCpsize        = +1 (default) to randomize BOTH ice (based on Tcld) and water deff
 %                                      20,   then water is ALWAYS 20 um (as in PCRTM wrapper), random ice
 %                                      (based on Tcld)
@@ -52,6 +66,10 @@ function prof = driver_sarta_cloud100layer_rtp(h,ha,p,pa,run_sarta)
 % and instead needs run_sarta.ncol >= 1               : number of subcolumns (if cfrac == 1)
 %
 % updates
+%  04/27/2014 : introduced run_sarta.ice_water_separator + 1 option, which is
+%               quadratic as fcn of latitude separator, acording to IPCC AR5 report (Ch 7, Fig 7.5)
+%               X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[-90:5:+90];Y1=polyval(P,X1);
+%               above certain pressure = ice      below certain pressure = water
 %  08/18/2013 : introduced run_sarta.randomCpsize, default = +1 to keep randomizing deff; 
 %                                                             20 to keep ice = ice(T,pcrtm), water = 20 um
 %                                                             -1 to use MODIS water DME
@@ -71,7 +89,10 @@ function prof = driver_sarta_cloud100layer_rtp(h,ha,p,pa,run_sarta)
   run_sarta.cloud = +1;
   run_sarta.ncol  = 50;
   run_sarta.cfrac = 1;
-  run_sarta.ice_water_separator = 440;
+  run_sarta.ice_water_separator = +1;    %% model 1, use X = [-60 0 +60]; Y = [6 9 6];
+                                         %% P = polyfit(X,Y,2); X1=[-90:5:+90];Y1=polyval(P,X1); from IPCC AR5 report (Chapter 7, Fig.7.5):
+					 %% see https://www.gfdl.noaa.gov/clouds-climate-initiative/
+  run_sarta.ice_water_separator = 440;   %% this is from ISCCP (ice clouds above 440 mb)
   tic
   p1 = driver_sarta_cloud100layer_rtp(h,ha,p,pa,run_sarta);
   toc

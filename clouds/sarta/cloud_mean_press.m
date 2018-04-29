@@ -66,10 +66,11 @@ end
 iDebug = -1;
 if iDebug > 0
   disp('setting cloud_mean_press.m')
-  com.mathworks.services.Prefs.setBooleanPref('EditorGraphicalDebugging',false)   
-  keyboard
+  %com.mathworks.services.Prefs.setBooleanPref('EditorGraphicalDebugging',false)   
+  %keyboard
   [aa.icecldX(ii) aa.watercldX(ii) aa.icecldY(ii) aa.watercldY(ii)]
-  figure(1); subplot(121); plot(icecldX, plevs,watercldX ,plevs); set(gca,'ydir','reverse')
-  figure(1); subplot(122); plot(icecldXW,plevs,watercldXW,plevs); set(gca,'ydir','reverse')
+  figure(1); subplot(121); plot(icecldX, plevs,'b',watercldX ,plevs,'r'); set(gca,'ydir','reverse')
+  figure(1); subplot(122); plot(icecldXW,plevs,'b',watercldXW,plevs,'r'); set(gca,'ydir','reverse')
 %  figure(1); subplot(122); plot(1-icecldXW,plevs,1-watercldXW,plevs); set(gca,'ydir','reverse')
+  error('in cloud_mean_press.m')
 end

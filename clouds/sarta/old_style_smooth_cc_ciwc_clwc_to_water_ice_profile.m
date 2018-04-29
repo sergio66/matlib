@@ -43,6 +43,6 @@ else
   icecld   = profX.ciwc(:,ii);
 end
 
-aa        = [];
-ptemp     = [];
-cutoff440 = [];
+aa     = [];
+ptemp  = [];
+cut440 = [];

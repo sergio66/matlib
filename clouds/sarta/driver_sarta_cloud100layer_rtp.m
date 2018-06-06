@@ -114,30 +114,63 @@ addpath([base_dir2 '/h4tools'])
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% defaults
-check_sarta_cloud_rtp_defaults
+narginx = nargin;
+if nargin == 4
+  run_sarta = struct;
+end  
+[p,run_sarta,otherstuff] = check_sarta_cloud_rtp_defaults(run_sarta,h,p,narginx);
 
-%% turn profiles into slabs
-main_code_to_make_slabs
-
-%% add on co2
-prof_add_co2
+cmin = otherstuff.cmin;             %% min allowed cfrac
+cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat
+iDebugMain = otherstuff.iDebugMain; %% to debug or not???
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% do 2 slabclouds
+
+%% turn profiles into slabs, waste of time
+%% prof = main_code_to_make_slabs(h,ha,p,pa,run_sarta,iDebugMain,otherstuff);
+prof = p;
+
+%% add on co2
+prof = prof_add_co2(h,prof,run_sarta);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if isfield(prof,'rcalc')
+  prof = rmfield(prof,'rcalc');
+end
+if isfield(prof,'rcld')
+  prof = rmfield(prof,'rcld');
+end
+
+run_sarta.Slab_or_100layer = -1;     %% now explicitly set this
+if run_sarta.Slab_or_100layer == -1  %% which it WILL be, given line above
+  if ~isfield(run_sarta,'ncol')
+    run_sarta.ncol    =  1;  %% number of columns for 100 layer cloud code
+    run_sarta.ncol    = 25;  %% number of columns for 100 layer cloud code
+  end
+  if ~isfield(run_sarta,'overlap')
+    run_sarta.overlap = +3;  %% maximal random overlap for 100 layer cloud code
+  end
+  %% see /home/sergio/klayersV205/Src_rtpV201_100layercloudamountsize
+  run_sarta.klayers_code = '/home/sergio/klayersV205/BinV201/klayers_airs_x_testmeCLOUDversion';
+  %% see /home/sergio/SARTA_CLOUDY/v108_Src_rtpV201_pclsam_slabcloud_hg3_100layerNEW
+  run_sarta.sartacloud_code = ...
+      '/home/sergio/SARTA_CLOUDY/BinV201/WORKS_Dec2015/sarta_apr08_m140x_iceGHMbaum_waterdrop_desertdust_slabcloud_hg3_100layerNEW';
+end
 
 %% now essentially IGNORE the above and instead do the cloud PROFILES stuff
 [h,prof] = reset_cloud_slab_with_cloud_profile(h,prof,run_sarta.cfrac);
 
 %% and add on aux info, such as OD etc
+load airsheights.dat
+load airslevels.dat
 prof = cloudOD_for100layer(prof,run_sarta.cumsum/100,airslevels,airsheights);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 if run_sarta.clear > 0 
   disp('running SARTA clear, saving into rclearcalc')
-  tic
-  get_sarta_clear;
-  toc
-  prof.sarta_rclearcalc = profRX2.rcalc;
+  prof = get_sarta_clear(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA clear to be run; not changing p.rcalc')
 end
@@ -146,55 +179,10 @@ if run_sarta.cloud > 0
   if run_sarta.ncol == 1
     %% all you have to do is run ONCE
     disp('running SARTA cloud ONCE')
-    tic
-      get_sarta_cloud100layer;
-    toc
-    prof.rcalc = profRX2.rcalc;
+    prof = get_sarta_cloud100layer(h,ha,prof,pa,run_sarta);
   else
-    profNCOL_IP = prof;   %%%% <<<<<<<<<<<<<<<< save this, need it a lot!!!!!
-    h_IP        = h;
-    get_sarta_cloud100layer_klayersONLY
-    profNCOL_OP = pjunk;
-    h_OP        = hjunk;
-    [mmjunk,nnjunk] = size(profNCOL_OP.plevs);
-    [unique_col_frac,ucol_num,ucol_num_same,subcol_frac] = ...
-       get_subcolumn_frac_v2(length(prof.stemp), mmjunk, run_sarta.ncol, profNCOL_OP.cc',...
-                                    run_sarta.overlap);
-
-    for iCol = 1 : run_sarta.ncol
-      fprintf(1,'running SARTA cloud N times : subcol %3i out of %3i \n',iCol,run_sarta.ncol);
-      prof = profNCOL_OP;
-      [hX,profX] = do_subcol_cloudprofs(h_OP,prof,squeeze(subcol_frac(:,iCol,:)));
-      if hX.ptype == 0
-        xciwc(iCol,:,:) = profX.ciwc;
-        xclwc(iCol,:,:) = profX.clwc;
-      else
-        xciwc(iCol,:,:) = profX.gas_201;
-        xclwc(iCol,:,:) = profX.gas_202;
-      end
-      get_sarta_cloud100layer_sartaONLY;
-      %% junkcalc(iCol,:,:) = profRX2.rcalc;    %% MEMORY HOG
-      if iCol == 1
-        %% slower, but more memory efficient
-        [sumy,sumysqr,Nmatr] = accum_mean_std(0,0,0,profRX2.rcalc,1);
-      else
-        %% slower, but more memory efficient
-        [sumy,sumysqr,Nmatr] = accum_mean_std(sumy,sumysqr,Nmatr,profRX2.rcalc,iCol);
-      end
-    end
-
-    prof = profNCOL_IP;
-
-    %% prof.rcalc     = squeeze(nanmean(junkcalc,1));
-    %% prof.rcalc_std = squeeze(nanstd(junkcalc,1));
-
-    prof.rcalc = sumy./Nmatr;
-    junk_mean = prof.rcalc;
-    %prof.rcalc_std = ...
-    %  real(sqrt((sumysqr - 2*junk_mean.*sumy + Nmatr.*junk_mean.*junk_mean)./(Nmatr-1)));
-    prof.rcalc_std  = ...
-      real(sqrt((sumysqr - 2*junk_mean.*sumy + Nmatr.*junk_mean.*junk_mean)./(Nmatr-0)));
-
+    disp('running SARTA cloud MANY TIMES')
+    prof = get_sarta_cloud100layerNtimes(h,ha,prof,pa,run_sarta);
   end
 else
   disp('you did not ask for SARTA cloudy to be run; not changing p.rcalc')

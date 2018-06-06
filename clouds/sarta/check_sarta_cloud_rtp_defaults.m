@@ -66,19 +66,6 @@ if narginx == 4
   choose_klayers_sarta   %% this is for two slab only
 
   run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
-  if run_sarta.Slab_or_100layer == -1  %% which it WILL NOT be, given line above, these would be the default settings
-
-    run_sarta.ncol    =  1;  %% number of columns for 100 layer cloud code
-    run_sarta.ncol    = 25;  %% number of columns for 100 layer cloud code
-    run_sarta.overlap = +3;  %% maximal random overlap for 100 layer cloud code
-
-    %% see /home/sergio/klayersV205/Src_rtpV201_100layercloudamountsize
-    run_sarta.klayers_code = '/home/sergio/klayersV205/BinV201/klayers_airs_x_testmeCLOUDversion';
-
-    %% see /home/sergio/SARTA_CLOUDY/v108_Src_rtpV201_pclsam_slabcloud_hg3_100layerNEW
-    run_sarta.sartacloud_code = ...
-       '/home/sergio/SARTA_CLOUDY/BinV201/sarta_apr08_m140x_iceGHMbaum_waterdrop_desertdust_slabcloud_hg3_100layerNEW';
-  end
     
 elseif narginx == 5
   if ~isfield(run_sarta,'iNew_or_Orig_CXWC2OD')

@@ -454,6 +454,17 @@ if (isfield(profin,'rcalc'))
    prof.rcalc=profin.rcalc(indc,indp);
 end
 
+%{
+if (isfield(profin,'rclr'))
+   prof.rcalc=profin.rclr(indc,indp);
+end
+if (isfield(profin,'rcld'))
+   prof.rcalc=profin.rcld(indc,indp);
+end
+if (isfield(profin,'sarta_rclearcalc'))
+   prof.rcalc=profin.sarta_rclearcalc(indc,indp);
+end
+%}
 
 % User Defined data
 if (isfield(profin,'pnote'))
@@ -491,7 +502,7 @@ if length(fieldsIN) ~= length(fieldsOUT)
     end
     bad = find(iaFound < 0);
     for ii = 1 : length(bad)
-      %fprintf(1,' did not find field %s \n',fieldsIN{bad(ii)})
+      fprintf(1,' did not find field %s \n',fieldsIN{bad(ii)})
       str = ['blah = profin.' fieldsIN{bad(ii)} ';'];
       eval(str);
       [mm,nn] = size(blah);
@@ -499,9 +510,13 @@ if length(fieldsIN) ~= length(fieldsOUT)
         %% this is like eg p.stemp = 1 x N ---> 1 x M
         str = ['prof.' fieldsIN{bad(ii)} ' = blah(indp);'];         
         eval(str)
-      else
-        %% this is like eg p.robs1 = L x N ---> L x M
+      elseif mm <= 101
+        %% this is like eg p.gas_1 = L x N ---> L x M
         str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];         
+        eval(str)
+      elseif mm > 101
+        %% this is like eg p.robs1 = L x N ---> L x M
+        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];         
         eval(str)
       end
     end

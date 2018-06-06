@@ -1,3 +1,5 @@
+function [hjunk,hajunk,pjunk,pajunk] = get_sarta_cloud100layer_klayersONLY(h,ha,prof,pa,run_sarta);
+
 %% these are required but user needs to add them before using this code
 %% addpath /asl/matlib/aslutil/
 
@@ -44,5 +46,7 @@ yplevsA = pjunk.plevs(1:100,:) - pjunk.plevs(2:101,:);
 yplevsB = log(pjunk.plevs(1:100,:) ./ pjunk.plevs(2:101,:));
 yplevs  = yplevsA./yplevsB;
 ycc      = pjunk.cc(1:100,:);
-ix = 1:5; plot(ycc(:,ix),yplevs(:,ix),'b',prof.cc(:,ix),prof.plevs(:,ix),'r')
+ix = 1 : min(5,length(prof.stemp));
+  plot(ycc(:,ix),yplevs(:,ix),'b',prof.cc(:,ix),prof.plevs(:,ix),'r')
+  
 clear xnlevs xplevs xcc ynlevs yplevs* ycc

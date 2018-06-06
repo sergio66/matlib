@@ -1,8 +1,13 @@
+function prof = main_code_to_make_slabs(h,ha,p,pa,run_sarta,iDebugMain,otherstuff)
+
 %% this script is the main slab maker
 %%   input  h,p  (levels profile with cc,ciwc,clwc)
 %%   output prof (levels profile with cc,ciwc,clwc, and slab cloud info cprtop,cngwat,cfrac,cpsize)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cmin = otherstuff.cmin;             %% min allowed cfrac
+cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat
+iDebugMain = otherstuff.iDebugMain; %% to debug or not???
 
 %% first do some sanity checks
 badtcc0  = find(p.tcc < 0); p.tcc(badtcc0) = 0;

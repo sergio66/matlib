@@ -1,4 +1,4 @@
-function prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,narginx)
+function prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx)
 
 %% modelled on MATLABCODE/CLOUD_ECMWF_ERA/PACKAGE_CFRAC/readecmwf91_nearest_gasNcloud_slabprof.m
 %% also see /asl/rtp_prod/airs/rtp/create_rcalc_ecm_cld_allfov.m
@@ -113,9 +113,6 @@ addpath([base_dir2 '/h4tools'])
 
 pINPUT = p;
 
-%% defaults HAVE ALREADY BEEN CHECKED in driver_sarta_cloud_rtp.m
-%% check_sarta_cloud_rtp_defaults << removed this in Apr 2018
-
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% we need these from check_sarta_cloud_rtp_defaults
 iDebugMain = +1;  %% yes debug keyboards
@@ -124,12 +121,18 @@ iDebugMain = -1;  %% no debug keyboards
 cmin = 0.0001;
 % Max allowed cngwat[1,2]
 cngwat_max = 500;
+
+cmin = otherstuff.cmin;             %% min allowed cfrac
+cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat
+iDebugMain = otherstuff.iDebugMain; %% to debug or not???
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% turn profiles into slabs
-main_code_to_make_slabs
+prof = main_code_to_make_slabs(h,ha,p,pa,run_sarta,iDebugMain,otherstuff);
 
-main_compute_sarta_rads
+%% compute rads
+prof = main_compute_sarta_rads(h,ha,prof,pa,pINPUT,run_sarta);
 
 tnow = toc;
 fprintf(1,'TOTAL : %8.6f minutes to process \n',tnow/60);

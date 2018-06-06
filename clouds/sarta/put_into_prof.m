@@ -140,7 +140,8 @@ end
     prof.cpsize(jj) = water_dme;  %% typical water particles
     waterfound      = +1;
   end
-
+  %[111.0 prof.cngwat(jj) prof.cpsize(jj) prof.cfrac(jj) prof.ctype(jj) prof.cprtop(jj) prof.cprbot(jj)]
+  
   kk = 2;
   prof.udef(11,jj)  = cc(kk);
   if iLevsVers == 1
@@ -160,7 +161,8 @@ end
     prof.udef(12,jj) = water_dme;  %% typical water particles
     waterfound       = +1;
   end
-
+  %[222.0 prof.udef(11,jj) prof.udef(12,jj) prof.udef(15,jj) prof.udef(17,jj) prof.udef(13,jj) prof.udef(14,jj)]
+  
   prof.udef(16,jj) = 0.9999*cfrac;  %%cfrac12
   if prof.cfrac(jj) < 0.9999
     prof.udef(16,jj) = 0.9999*min(prof.cfrac(jj),prof.udef(15,jj));  %%cfrac12

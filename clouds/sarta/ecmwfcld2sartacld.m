@@ -86,15 +86,15 @@ for iiiiA = 1:length(iiii)
   end
 
 %plot(profX.ciwc(:,ii),profX.plevs(:,ii),'bx-',profX.clwc(:,ii),profX.plevs(:,ii),'ro-',watercld,plevs,'g')
+%[plevs(iT) plevs(iB)]
 %[plevs(wT) plevs(wB)]
+%[iN wN]
 %cut440
-%disp('lkjdkjhdljkdh')
-%keyboard_nowindow
 
   cloud_combine_main_code
   prof = put_into_prof(prof,profX,ii,jj,plevs,ptemp,iLevsVers,...
                        cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airsheights);
-
+		       
 %{
 if ii == 21
   plot(profX.ciwc(:,ii),profX.plevs(:,ii),'rx-',profX.clwc(:,ii),profX.plevs(:,ii),'bo-',watercld,plevs,'g')
@@ -128,3 +128,4 @@ prof.icecldY   = aa.icecldY;      %%   ice cloud mean pressure based on run_sart
 %  com.mathworks.services.Prefs.setBooleanPref('EditorGraphicalDebugging',false)
 %  disp('here key')
 %  keyboard
+

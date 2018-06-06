@@ -1,3 +1,7 @@
+function [prof] = main_compute_sarta_rads(h,ha,prof0,pa,pINPUT,run_sarta)
+
+prof = prof0;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  adds CO2 profile, if needed removes ice or water clds, runs sarta %%
@@ -6,12 +10,16 @@
 
 %% if running interactively, and had old slabs but new slabs are computed,
 %% can plot histograms
-do_compare_plot_oldVSnew_slabs
+iCompareSlabs = +1;
+iCompareSlabs = -1;
+if iCompareSlabs > 0
+  do_compare_plot_oldVSnew_slabs(prof,pINPUT,iCompareSlabs);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% add on co2
-prof_add_co2
+prof = prof_add_co2(h,prof,run_sarta);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -26,20 +34,14 @@ end
 
 if run_sarta.clear > 0 
   disp('running SARTA clear, saving into rclearcalc')
-  tic
-  get_sarta_clear;
-  toc
-  prof.sarta_rclearcalc = profRX2.rcalc;
+  prof = get_sarta_clear(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA clear to be run; not changing prof.sarta_rclearcalc')  
 end
 
 if run_sarta.cloud > 0 
   disp('running SARTA cloud')
-  tic
-  get_sarta_cloud;
-  toc
-  prof.rcalc = profRX2.rcalc;
+  prof = get_sarta_cloud(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA cloudy to be run; not changing prof.rcalc')
 end

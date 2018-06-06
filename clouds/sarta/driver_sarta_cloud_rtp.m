@@ -178,7 +178,13 @@ addpath([base_dir2 '/h4tools'])
 
 %% defaults
 narginx = nargin;
-check_sarta_cloud_rtp_defaults
+if nargin == 4
+  run_sarta = struct;
+end  
+[p,run_sarta,otherstuff] = check_sarta_cloud_rtp_defaults(run_sarta,h,p,narginx);
+cmin = otherstuff.cmin;             %% min allowed cfrac
+cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat
+iDebugMain = otherstuff.iDebugMain; %% to debug or not???
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -224,13 +230,12 @@ if iAlreadyExistSlabClds < 0
   %% need to add in slab cloud fields
   disp(' >>>>>>>>>>>>> adding in slab cloud fields <<<<<<<<<<<<<<<<<')
   [orig_slabs,p] = get_orig_slabs_info(p,run_sarta);
-  prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,narginx); 
+  prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx); 
 elseif iAlreadyExistSlabClds > 0
   %% slab cloud fields already exist, just run klayers and sarta
   disp(' >>>>>>>>>>>>> slab cloud fields already exist; simply running klayers and sarta <<<<<<<<<<<<<<<<<')
   orig_slabs = [];
-  prof = p;
-  main_compute_sarta_rads
+  prof = main_compute_sarta_rads(h,ha,p,pa,pINPUT,run_sarta);
 end
 
 tnow = toc;

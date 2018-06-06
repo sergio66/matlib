@@ -11,6 +11,7 @@ elseif ice_water_separator == 0
   pSEPARATE = 9999;
 elseif ice_water_separator > 100
   pSEPARATE = ice_water_separator;
+
 elseif ice_water_separator == 1 | ice_water_separator == 2
   X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2);
   X1 = profX.rlat;
@@ -28,6 +29,19 @@ elseif ice_water_separator == 1 | ice_water_separator == 2
   if pSEPARATE < 440
     pSEPARATE = 440;
   end
+
+  ciwc  = profX.ciwc(:,ii);
+  plevs = profX.plevs(:,ii);
+  plot(ciwc,plevs);
+  if sum(ciwc) > eps
+    nonzero_ciwc = min(find(ciwc > 0));
+    if nonzero_ciwc < length(plevs)
+      nonzero_ciwc = nonzero_ciwc + 1;
+    end
+    nonzero_ciwc = plevs(nonzero_ciwc);
+    pSEPARATE = max(nonzero_ciwc,pSEPARATE);
+  end
+  
 end
 
 if pSEPARATE < 440

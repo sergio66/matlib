@@ -1,5 +1,11 @@
+function prof = get_sarta_clear(h,ha,prof0,pa,run_sarta)
+
+tic
+
 %% these are required but user needs to add them before using this code
 %% addpath /asl/matlib/aslutil/
+
+prof = prof0;
 
 disp(' ')
 fprintf(1,'  doing clear sky SARTA calcs ....\n')
@@ -44,3 +50,6 @@ catch me
 end
 
 rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh]; eval(rmer);
+
+toc
+prof.sarta_rclearcalc = profRX2.rcalc;

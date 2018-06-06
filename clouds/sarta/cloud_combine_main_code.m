@@ -36,6 +36,7 @@ if p440 < 1013
     for kk = 1 : length(cTYPE)
       if cTYPE(kk) == 'I' & plevs(cT(kk)) > p440
         cT(kk) = cut440 - 10;
+        cT(kk) = cut440 - 1;	
         if iPrint > 0
           fprintf(1,'warning had to reset ICE cloudtop, to make it less than %8.3 mb \n',p440)
         end

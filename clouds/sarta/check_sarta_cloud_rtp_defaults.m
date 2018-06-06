@@ -1,3 +1,5 @@
+function [p,run_sarta,otherstuff] = check_sarta_cloud_rtp_defaults(run_sarta0,h,p0,narginx);
+
 %% SLAB
   % run_sarta.klayers_code    = '/asl/packages/klayers/Bin/klayers_airs';
   % run_sarta.sartacloud_code = '/asl/packages/sartaV108/Bin/sarta_apr08_m140_iceaggr_waterdrop_desertdust_slabcloud_hg3_wcon_nte';
@@ -18,6 +20,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% defaults
+
+run_sarta = run_sarta0;
+p = p0;
 
 if narginx == 4
   %% default to running sarta_cloudy
@@ -149,13 +154,13 @@ end
 
 
 % Min allowed cloud fraction
-cmin = 0.0001;
+otherstuff.cmin = 0.0001;
 
 % Max allowed cngwat[1,2]
-cngwat_max = 500;
+otherstuff.cngwat_max = 500;
 
-iDebugMain = +1;  %% yes debug keyboards
-iDebugMain = -1;  %% no debug keyboards
+otherstuff.iDebugMain = +1;  %% yes debug keyboards
+otherstuff.iDebugMain = -1;  %% no debug keyboards
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -168,7 +173,6 @@ elseif ~isfield(p,'cc')
 elseif h.ptype ~= 0
   error('driver_pcrtm_cloud_rtp.m requires LEVELS profiles (h.ptype = 0)');
 end
-
 
 disp('>>>>>>>> warning : setting SEPARATOR for ice and water .... initializing')
 fprintf(1,'  run_sarta.ice_water_separator = %4i \n',run_sarta.ice_water_separator);

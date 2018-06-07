@@ -334,6 +334,7 @@ for iInd = 1 : iIndMax
 
   ppath = '/strowdata1/s1/sergio/PCRTM_XIANGLEI/NEWVERS/PCRTM_V2.1_for_AIRS/code_changed/Run/';
   ppath = '/asl/s1/sergio/PCRTM_XIANGLEI/NEWVERS/PCRTM_V2.1_for_AIRS/code_changed/Run/';
+  ppath = '/home/sergio/PCRTM_XIANGLEI/NEWVERS/PCRTM_V2.1_for_AIRS/code_changed/Run/';
   parnameout = [parname '.out'];
 
   %whos P WCT ICE cc TT q o3 Ps Ts sfctype efreq emis zen_ang co2 
@@ -448,9 +449,14 @@ h1ALL.gunit = [21 10 21 10 10 10]';
 h1ALL.pmin  = min(min(p1ALL.plevs));
 h1aALL      = ha;
 
-% now overwrite p.rcalc and replace with pcrtm calcs
-p1ALL.rcalc       = p1ALL.rad_allsky;
-p1ALL.rcalc_std   = p1ALL.rad_allsky_std;
+%{
+% decided to get rid of this in May 2018 since it gets toooooo confusing
+% just stick to rad_clrsky rad_allsky rad_allsky_std
+%
+%% now overwrite p.rcalc and replace with pcrtm calcs
+%% p1ALL.rcalc       = p1ALL.rad_allsky;
+%% p1ALL.rcalc_std   = p1ALL.rad_allsky_std;
+%}
 
 %% in ppmv, GUNITS = 10
 for ij = 1 : length(p1ALL.stemp)

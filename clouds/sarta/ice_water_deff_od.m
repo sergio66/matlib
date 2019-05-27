@@ -53,6 +53,7 @@ diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 
 %% bugfix on 6.3.2013 ... this was mistakenly ptemp before early June, 2013
 Z = p2hFAST(press,airslevels,airsheights)/1000;
+%whos press airslevels airsheights
 diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,30 +62,30 @@ p1.sarta_lvlZ(:,ii) = Z;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cldde_ice = c0 + c1 * tcld + c2 * tcld.^2 + c3 * tcld.^3;
+cld_de_ice = c0 + c1 * tcld + c2 * tcld.^2 + c3 * tcld.^3;
 
 % compute ice cloud optical depth from Ebert and Curry (1992, J. Geophys. Res.) 
 qi = ciwc ./ ptemp .* press *100/R * 1e3;  %%change IWC from kg/kg to g/m^3
 if iNew_or_Orig_CXWC2OD == -1
-  iceOD = (0.003448 + 2.431./cldde_ice) .* qi ./ cc .* diffZ *1e3;   %% ORIG
+  iceOD = (0.003448 + 2.431./cld_de_ice) .* qi ./ cc .* diffZ *1e3;   %% ORIG
 elseif iNew_or_Orig_CXWC2OD == 0
-  iceOD = (0.003448 + 2.431./cldde_ice) .* qi ./ cc .* diffZ *1e3;   %% XIUHONG
+  iceOD = (0.003448 + 2.431./cld_de_ice) .* qi ./ cc .* diffZ *1e3;   %% XIUHONG
   iceOD(cc < 1e-3) = 0.0;
 elseif iNew_or_Orig_CXWC2OD == +1
-  iceOD = (0.003448 + 2.431./cldde_ice) .* qi .* cc .* diffZ *1e3;   %% SERGIO
+  iceOD = (0.003448 + 2.431./cld_de_ice) .* qi .* cc .* diffZ *1e3;   %% SERGIO
 end
 
 bad = find(ciwc < theeps);
 iceOD(bad) = 0.0;
 
-%figure(3); plot(cldde_ice); title('cldde ice'); disp('ret'); pause
+%figure(3); plot(cld_de_ice); title('cld_de ice'); disp('ret'); pause
 %figure(3); plot(qi);        title('qi'); disp('ret'); pause
 %figure(3); plot(diffZ);     title('diffZ'); disp('ret'); pause
 %figure(3); plot(cc);        title('cc'); disp('ret'); pause
 %figure(3); plot(iceOD);     title('iceOD 0'); disp('ret'); pause
 
-bad = find(isnan(cldde_ice)); cldde_ice(bad) = -9999;
-p1.sarta_lvlDMEice(:,ii) = cldde_ice;
+bad = find(isnan(cld_de_ice)); cld_de_ice(bad) = -9999;
+p1.sarta_lvlDMEice(:,ii) = cld_de_ice;
 
 bad = find(isnan(iceOD) | isinf(iceOD)); iceOD(bad) = 0;
 p1.sarta_lvlODice(:,ii) = iceOD;
@@ -93,21 +94,21 @@ p1.sarta_lvlODice(:,ii) = iceOD;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cldde_liq = 20 * ones(size(press));
+cld_de_liq = 20 * ones(size(press));
 
 % compute water cloud optical depth, % ECMWF technical report, Klein S. A., 1999
 qw = clwc ./ ptemp .* press *100/R *1e3;  %change liquid water content from kg/kg to g/m^3
 if iNew_or_Orig_CXWC2OD == -1
-  waterOD = 3 * qw ./ cldde_liq ./cc .*diffZ  *1e3;  %% ORIG
+  waterOD = 3 * qw ./ cld_de_liq ./cc .*diffZ  *1e3;  %% ORIG
 elseif iNew_or_Orig_CXWC2OD == 0  
-  waterOD = 3 * qw ./ cldde_liq ./cc .*diffZ  *1e3;  %% XIUHONG
+  waterOD = 3 * qw ./ cld_de_liq ./cc .*diffZ  *1e3;  %% XIUHONG
   waterOD(cc < 1e-3) = 0.0;
 elseif iNew_or_Orig_CXWC2OD == +1  
-  waterOD = 3 * qw ./ cldde_liq .*cc .*diffZ  *1e3;  %% SERGIO
+  waterOD = 3 * qw ./ cld_de_liq .*cc .*diffZ  *1e3;  %% SERGIO
 end
 
-bad = find(isnan(cldde_liq)); cldde_liq(bad) = -9999;
-p1.sarta_lvlDMEwater(:,ii) = cldde_liq;
+bad = find(isnan(cld_de_liq)); cld_de_liq(bad) = -9999;
+p1.sarta_lvlDMEwater(:,ii) = cld_de_liq;
 
 bad = find(isnan(waterOD) | isinf(waterOD)); waterOD(bad) = 0;
 p1.sarta_lvlODwater(:,ii) = waterOD;

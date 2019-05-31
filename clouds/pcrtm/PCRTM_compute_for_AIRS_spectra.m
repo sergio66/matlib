@@ -284,6 +284,9 @@ for ibox = 1:nboxes
   sergio_ice_opt(1:nlev)   = 0;
   sergio_water_opt(1:nlev) = 0;
 
+  sergio_ice_gg(1:nlev)   = 0;
+  sergio_water_gg(1:nlev) = 0;
+
   for i = 1 : length(idc)
             
     ilev = idc(i);
@@ -361,6 +364,9 @@ for ibox = 1:nboxes
     sergio_ice_opt(ilev)   = ice_opt;
     sergio_water_opt(ilev) = water_opt;
     
+    sergio_ice_gg(ilev)    =  sub_qi(ilev);
+    sergio_water_gg(ilev)  =  sub_qw(ilev);
+
   end
   %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     

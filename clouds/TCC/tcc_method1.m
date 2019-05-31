@@ -7,6 +7,12 @@ TOA, ak is the cloud fraction for a single layer k):
   for k=2:n_levels.
   init cond : for k=1, c1=a1.
   where delta = 0.000001
+
+see jakob_klein_qj1999.pdf
+Q. J. R. Meteorol. Soc. (1999), 125, pp. 941–965
+The role of vertically varying cloud fraction in the parametrization of microphysical processes
+in the ECMWF model
+By Christian Jakob and Stephen A. Klein
 %}
 
 function tcc = tcc_method1(p0)

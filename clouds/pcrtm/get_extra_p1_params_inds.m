@@ -25,6 +25,8 @@ p1ALL.pcrtm_waterCTOP(inds) = tmpjunk.maxCTOPwater;
 %% these are the PCRTM CLOUD profile parameters, and should compare to each other
 p1ALL.pcrtm_lvlODice(:,inds)   = tmpjunk.lvlODice;
 p1ALL.pcrtm_lvlODwater(:,inds) = tmpjunk.lvlODwater;
+p1ALL.pcrtm_lvlggice(:,inds)   = tmpjunk.lvlggice;
+p1ALL.pcrtm_lvlggwater(:,inds) = tmpjunk.lvlggwater;
 p1ALL.pcrtm_iceODX(inds)       = tmpjunk.totalODiceX;
 p1ALL.pcrtm_waterODX(inds)     = tmpjunk.totalODwaterX;
 

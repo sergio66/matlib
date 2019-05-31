@@ -148,6 +148,8 @@ if nargin == 4
   run_sarta.iUMichCO2     = 0;   %% when calling PCRTM_compute_for_AIRS_spectra.m, use CO2 profile (InputDir/par_constant.dat) and
                                  %% molindx = 2 and keep scale factor unchanged from what Xiuhong originally gave
 				 %% (1.0135 ==> 385.848*1.0135 = 390.1975)
+  run_sarta.pcrtmrads    = 1;   %% default to always running PCRTM, can turn off rad calcs by setting to -1
+
   addpath ../
   choose_klayers_sarta
 
@@ -180,9 +182,18 @@ elseif nargin == 5
   if ~isfield(run_sarta,'iUMichCO2')
     run_sarta.iUMichCO2 = 0;
   end
+  if ~isfield(run_sarta,'pcrtmrads')
+    run_sarta.pcrtmrads = 1;
+  end
 
   addpath ../
   choose_klayers_sarta
+end
+
+if run_sarta.pcrtmrads < 0
+  disp('run_sarta.pcrtmrads < 0 so turning off PCRTM calcs!!!')
+  run_sarta.clear = -999;
+  run_sarta.cloud = -999;
 end
 
 ncol0   = run_sarta.ncol0;
@@ -376,12 +387,14 @@ for iInd = 1 : iIndMax
     tmpjunk.maxCTOPice  = zeros(1,length(p.stemp));
     tmpjunk.totalODiceX = zeros(1,length(p.stemp));
     tmpjunk.lvlODice    = zeros(max(p.nlevs),length(p.stemp));
+    tmpjunk.lvlggice    = zeros(max(p.nlevs),length(p.stemp));
     
     tmpjunk.totalODwater  = zeros(1,length(p.stemp));
     tmpjunk.meanDMEwater  = zeros(1,length(p.stemp));    
     tmpjunk.maxCTOPwater  = zeros(1,length(p.stemp));
     tmpjunk.totalODwaterX = zeros(1,length(p.stemp));
     tmpjunk.lvlODwater    = zeros(max(p.nlevs),length(p.stemp));    
+    tmpjunk.lvlggwater    = zeros(max(p.nlevs),length(p.stemp));    
 
     ncolONECLD = -1;
     [rad_allsky rad_clrsky tmpjunk rad_allsky_std sarta_gas_2_6] = ...

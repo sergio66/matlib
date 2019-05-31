@@ -52,9 +52,11 @@ end
 %whos total* meanDME* maxCTOP* sergio_ice_opt sergio_water_opt
 %  [ibox ucol_num(ibox)]
 
-%% assume no ice or water in any of the Ncol0 profiles
+%% assume no ice or water in any of the Ncol0 profiles????
 tmpjunk.lvlODice(:,ibox)   = sergio_ice_opt;
 tmpjunk.lvlODwater(:,ibox) = sergio_water_opt;
+tmpjunk.lvlggice(:,ibox)   = sergio_ice_gg;
+tmpjunk.lvlggwater(:,ibox) = sergio_water_gg;
 
 tmpjunk.totalODiceX(ibox)   = NaN;
 tmpjunk.totalODwaterX(ibox) = NaN;

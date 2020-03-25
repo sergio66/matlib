@@ -772,16 +772,21 @@ else
   disp('no calcs done at all since run_sarta.iNewVSOrig = -999 !!!!')
 end
 
+iDoPlot = -1;
 if exist('rad_allsky') & exist('rad_clrsky')
-  plot(1:length(tmpjunk.totalODice),rad_allsky(1291,:),'bs-',...
-       1:length(tmpjunk.totalODice),rad_clrsky(1291,:),'kx-')
-  title('PCRTM cals for Rad 1231 : (b) cloudy (k) clear sky')
-  pause(0.1)
+  fprintf(1,'radiance units allsky mean and std dev at CH 1291 = %8.6f +/- %8.6f K \n',mean(rad_allsky(1291,:)),std(rad_allsky(1291,:)))
+  fprintf(1,'radiance units clrsky mean and std dev at CH 1291 = %8.6f +/- %8.6f K \n',mean(rad_clrsky(1291,:)),std(rad_clrsky(1291,:)))
+  if iDoPlot > 0
+    plot(1:length(tmpjunk.totalODice),rad_allsky(1291,:),'bs-',...
+         1:length(tmpjunk.totalODice),rad_clrsky(1291,:),'kx-')
+    title('PCRTM cals for Rad 1231 : (b) cloudy (k) clear sky')
+  else
+    disp('1231 cm-1 plots : cannot plot on batch jobs')
+  end
 else
+  disp('rad_allsky or rad_clrsky DNE setting to zero')
   rad_allsky = zeros(2378,length(Ts));
   rad_clrsky = zeros(2378,length(Ts));
   rad_allsky_mean = zeros(2378,length(Ts));
   rad_allsky_std = zeros(2378,length(Ts));
 end
-
-

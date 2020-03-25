@@ -79,9 +79,11 @@ end
 prof = put_into_V201cld_fields(prof);    %% puts cloud info from above into rtpv201 fields 
   prof.ctype  = double(prof.ctype);
   prof.ctype2 = double(prof.ctype2);
-plot(1:length(prof.stemp),prof.cprtop-prof.cprbot,1:length(prof.stemp),prof.cprtop2-prof.cprbot2)
-title('showing cprtop-cprtbot and cprtop2-cprbot2')
-pause(0.1);
+if iDebugMain > 0
+  plot(1:length(prof.stemp),prof.cprtop-prof.cprbot,1:length(prof.stemp),prof.cprtop2-prof.cprbot2)
+  title('showing cprtop-cprtbot and cprtop2-cprbot2')
+  pause(0.1);
+end
 
 if iDebugMain > 0
   figure(3); plot(prof.ciwc,prof.plevs,'b',prof.clwc,prof.plevs,'r'); ax=axis; axis([0 ax(2) 0 1000]); set(gca,'ydir','reverse')

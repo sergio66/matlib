@@ -1,4 +1,4 @@
-function [head, prof]=subset_rtp_allcloudfields(headin, profin, glist, clist, plist);
+function [head, prof]=subset_rtp_allcloudfields(headin, profin, glist, clist, plist, iQuiet);
 
 % function [head, prof]=subset_rtp(headin, profin, glist, clist, plist);
 %
@@ -46,7 +46,11 @@ if length(clist) == 0 & length(glist) == 0 & length(plist) == 0
   disp(' >>>> subset_rtp_allcloudfields.m   glist,clist,plist all empty so returning null structure')
   return
 end
-  
+
+if length(nargin) < 6
+  iQuiet = +1;
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%
 % Check headin & profin
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -278,7 +282,6 @@ end
 if (isfield(profin,'gtotal'))
    prof.gtotal=profin.gtotal(indg,indp);
 end
-
 if (isfield(profin,'gxover'))
    prof.gxover=profin.gxover(indg,indp);
 end
@@ -441,10 +444,20 @@ if (isfield(profin,'robs1'))
    prof.robs1=profin.robs1(indc,indp);
 end
 if (isfield(profin,'calflag'))
-   prof.calflag=profin.calflag(indc,indp);
+   [mmjunk,nnjunk] = size(profin.calflag);
+   if mmjunk > 1
+     prof.calflag=profin.calflag(indc,indp);
+   else
+     prof.calflag=profin.calflag(indp);
+   end
 end
 if (isfield(profin,'robsqual'))
-   prof.robsqual=profin.robsqual(indc,indp);
+   [mmjunk,nnjunk] = size(profin.robsqual);
+   if mmjunk > 1
+     prof.robsqual=profin.robsqual(indc,indp);
+   elseif mmjunk == 1
+     prof.robsqual=profin.robsqual(indp);
+   end
 end
 if (isfield(profin,'freqcal'))
    prof.freqcal=profin.freqcal(indp);
@@ -489,6 +502,9 @@ fieldsOUT = fieldnames(prof);
 if length(fieldsIN) ~= length(fieldsOUT)
   junk = [length(fieldsIN) length(fieldsOUT)];
   %fprintf(1,'oops Houston we have a problem : length(fieldsIN)=%3i length(fieldsOUT)=%3i\n',junk);
+  if (iQuiet < 0) 
+    fprintf(1,'oops Houston we have a problem : length(fieldsIN)=%3i length(fieldsOUT)=%3i\n',junk);
+  end
   if length(fieldsIN) > length(fieldsOUT)
     for ii = 1 : length(fieldsIN)
       finName = fieldsIN{ii};
@@ -502,7 +518,9 @@ if length(fieldsIN) ~= length(fieldsOUT)
     end
     bad = find(iaFound < 0);
     for ii = 1 : length(bad)
-      fprintf(1,' did not find field %s \n',fieldsIN{bad(ii)})
+      if (iQuiet < 0) 
+        fprintf(1,' did not find field %s \n',fieldsIN{bad(ii)})
+      end
       str = ['blah = profin.' fieldsIN{bad(ii)} ';'];
       eval(str);
       [mm,nn] = size(blah);
@@ -520,7 +538,9 @@ if length(fieldsIN) ~= length(fieldsOUT)
         eval(str)
       end
     end
-    fprintf(1,' ^^^ subset_rtp_allcloudfields.m : %2i more fieldnames in INPUT than in OUTPUT, fixed .... \n',length(bad));
+    if (iQuiet < 0)
+      fprintf(1,' ^^^ subset_rtp_allcloudfields.m : %2i more fieldnames in INPUT than in OUTPUT, fixed .... \n',length(bad));
+    end
   elseif length(fieldsIN) < length(fieldsOUT)
     error('WOW : more fieldnames in OUTPUT than in INPUT');
   end

@@ -66,7 +66,8 @@ if narginx == 4
   choose_klayers_sarta   %% this is for two slab only
 
   run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
-    
+  run_sarta.talk             = -1;     %% for quiet (default) or +1 for talk 
+
 elseif narginx == 5
   if ~isfield(run_sarta,'iNew_or_Orig_CXWC2OD')
     run_sarta.iNew_or_Orig_CXWC2OD = -1;  %%% stick  to OD = blah * qBlah / cc * diffZ                    Pre March 2017  DEFAULT
@@ -110,6 +111,10 @@ elseif narginx == 5
 
   if ~isfield(run_sarta,'Slab_or_100layer')
     run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
+  end
+
+  if ~isfield(run_sarta,'quiet')
+     run_sarta.talk       = -1;  %% quiet
   end
 
   if run_sarta.Slab_or_100layer == +1    %% run 2 slab clouds
@@ -161,16 +166,26 @@ elseif h.ptype ~= 0
   error('driver_pcrtm_cloud_rtp.m requires LEVELS profiles (h.ptype = 0)');
 end
 
-disp('>>>>>>>> warning : setting SEPARATOR for ice and water .... initializing')
-fprintf(1,'  run_sarta.ice_water_separator = %4i \n',run_sarta.ice_water_separator);
+if run_sarta.talk == +1
+  disp('>>>>>>>> warning : setting SEPARATOR for ice and water .... initializing')
+  fprintf(1,'  run_sarta.ice_water_separator = %4i \n',run_sarta.ice_water_separator);
+end
 if run_sarta.ice_water_separator == -1
-  disp('    default ice_water_separator, NO conversion of the CIWC/CLWC profiles at this stage')
+  if run_sarta.talk == +1
+    disp('    default ice_water_separator, NO conversion of the CIWC/CLWC profiles at this stage')
+  end
 elseif run_sarta.ice_water_separator == 0
-  disp('    ice_water_separator = 0, NO conversion of the CIWC/CLWC profiles at this stage')
+  if run_sarta.talk == +1
+    disp('    ice_water_separator = 0, NO conversion of the CIWC/CLWC profiles at this stage')
+  end
 elseif run_sarta.ice_water_separator == +1
-  disp('    ice_water_separator = 1, NO conversion of the CIWC/CLWC profiles at this stage')
+  if run_sarta.talk == +1
+    disp('    ice_water_separator = 1, NO conversion of the CIWC/CLWC profiles at this stage')
+  end
 elseif run_sarta.ice_water_separator == +2
-  disp('    ice_water_separator = 1, YES conversion of the CIWC/CLWC profiles at this stage')
+  if run_sarta.talk == +1
+    disp('    ice_water_separator = 1, YES conversion of the CIWC/CLWC profiles at this stage')
+  end
   % +2 : use quadratic X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=[-90:5:+90];Y1=polyval(P,X1); according to IPCC AR5 Ch 7, Fig 7.5
   X = [-60 0 +60]; Y = [6 9 6]; P = polyfit(X,Y,2); X1=p.rlat; Y1=polyval(P,X1);
   for ii = 1 : length(p.stemp)
@@ -190,7 +205,9 @@ elseif run_sarta.ice_water_separator == +2
   end    
   p = convert_ice_water_separator(p,Y1);
 elseif run_sarta.ice_water_separator > 100
-  disp('    ice_water_separator > 100, YES conversion of the CIWC/CLWC profiles at this stage')
+  if run_sarta.talk == +1
+    disp('    ice_water_separator > 100, YES conversion of the CIWC/CLWC profiles at this stage')
+  end
   Y1 = max(440,run_sarta.ice_water_separator) * ones(size(p.stemp));
   p = convert_ice_water_separator(p,Y1);
 else

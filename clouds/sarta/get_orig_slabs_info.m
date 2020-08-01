@@ -58,38 +58,50 @@ if isfield(p,'cfrac12')
   iFound = iFound + 1;  
 end
 
-if iFound > 0
-  fprintf(1,'   found %2i of total 13 possible cloud fields in orig structure \n',iFound)
-  fprintf(1,'   saving them so you can compare old vs new cloud slabs \n\n')
-elseif iFound == 0 & ~isfield(p,'tcc')
-  disp('did not find any cloud fields, including cfrac OR tcc !!!! in orig input structure, returning "orig_slabs = []" ...');
-  disp('this means need to initialize cfracs ... and get pretty bad biases overall ... ugh')
-  disp(' ')
-elseif iFound == 0 & isfield(p,'tcc')
-  disp('did not find any cloud fields, but found tcc !!!! in orig input structure, returning "orig_slabs = []" ...');
-  disp('this means need to initialize cfracs ... ')
-  disp(' ')
+if run_sarta.talk == 1
+  if iFound > 0
+    fprintf(1,'   found %2i of total 13 possible cloud fields in orig structure \n',iFound)
+    fprintf(1,'   saving them so you can compare old vs new cloud slabs \n\n')
+  elseif iFound == 0 & ~isfield(p,'tcc')
+    disp('did not find any cloud fslb ields, including cfrac OR tcc !!!! in orig input structure, returning "orig_slabs = []" ...');
+    disp('this means need to initialize cfracs ... and get pretty bad biases overall ... ugh')
+    disp(' ')
+  elseif iFound == 0 & isfield(p,'tcc')
+    disp('did not find any cloud slab fields, but found tcc !!!! in orig input structure, returning "orig_slabs = []" ...');
+    disp('this means need to initialize cfracs ... ')
+    disp(' ')
+  end
 end
 
 if ~isfield(p,'cfrac') & ~isfield(p,'tcc')
   %% need random cfracs
-  disp('>>>>>>>> warning : need random cfracs, and NO tcc .... initializing')
+  if run_sarta.talk == 1
+    disp('>>>>>>>> warning : need random cfracs, and NO tcc .... initializing')
+  end
   %% want to make sure there are NO zeros cfrac
   p.cfrac = 0.50*(rand(size(p.stemp)) + rand(size(p.stemp)));
 elseif ~isfield(p,'cfrac') & isfield(p,'tcc')
   %% need random cfracs
-  disp('>>>>>>>> warning : need random cfracs, and YES tcc .... initializing')
+  if run_sarta.talk == 1
+    disp('>>>>>>>> warning : need random cfracs, and YES tcc .... initializing')
+  end
   %% want to make sure there are NO zeros cfrac
   p.cfrac = p.tcc;
 end
 
 if isfield(p,'tcc') & run_sarta.tcc > 0
-  disp(' woohoo : you have field "tcc" so resetting "cfrac" with this!!!')
+  if run_sarta.talk == 1  
+    disp(' woohoo : you have field "tcc" so resetting "cfrac" with this!!!')
+  end
   p.cfrac = p.tcc;
 elseif isfield(p,'tcc') & run_sarta.tcc < 0
-  disp(' unfortunately run_sarta.tcc < 0 while you DO have p.tcc')
+  if run_sarta.talk == 1
+    disp(' unfortunately run_sarta.tcc < 0 while you DO have p.tcc')
+  end
 elseif ~isfield(p,'tcc') & run_sarta.tcc > 0
-  disp(' unfortunately run_sarta.tcc > 0 but you do NOT have p.tcc')
+  if run_sarta.talk == 1
+    disp(' unfortunately run_sarta.tcc > 0 but you do NOT have p.tcc')
+  end
   error('code now requires input field tcc')
 elseif ~isfield(p,'tcc')
   error('code now requires input field tcc')  

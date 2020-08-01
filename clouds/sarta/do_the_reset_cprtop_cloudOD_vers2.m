@@ -1,4 +1,4 @@
-function p1 = do_the_reset_cprtop_cloudOD_vers2(p1,pICE,pWATER,cumsumOD);
+function p1 = do_the_reset_cprtop_cloudOD_vers2(p1,pICE,pWATER,cumsumOD,run_sarta);
 
 iDebug = -1;
 
@@ -219,4 +219,6 @@ water3 = find(p1.ctype == 101 & p1.ctype2 ~= 101 & p1.sarta_waterOD_warn == 1);
   p1.cfrac12(water3) = 0; 
 waterbad = length([water1 water2 water3]);
 
-fprintf(1,'  looking at coincidence of ciwc/cc and clwc/cc, reset %5i bad ice and %5i bad water profs \n',icebad,waterbad)
+if run_sarta.talk == 1
+  fprintf(1,'  looking at coincidence of ciwc/cc and clwc/cc, reset %5i bad ice and %5i bad water profs \n',icebad,waterbad)
+end

@@ -20,11 +20,11 @@ if ~exist(sarta,'file')
   error('sarta cloud exec done not exist')
 end
 
-fip = mktemp('temp.ip.rtp');
-fop = mktemp('temp.op.rtp');
-frp = mktemp('temp.rp.rtp');
-ugh1 = mktemp('ugh1');
-ugh2 = mktemp('ugh2');
+fip = mktempS('temp.ip.rtp');
+fop = mktempS('temp.op.rtp');
+frp = mktempS('temp.rp.rtp');
+ugh1 = mktempS('ugh1');
+ugh2 = mktempS('ugh2');
 
 %{
 %% sometimes the files get toooooo large
@@ -62,19 +62,25 @@ rtpwrite(fip,h,ha,prof,pa);
 klayerser = ['!' klayers ' fin=' fip ' fout=' fop ' >& ' ugh1];
   eval(klayerser);
 
+iBad = -1;
 sartaer = ['!' sarta ' fin=' fop ' fout=' frp ' >& ' ugh2];
   eval(sartaer);
 try
   [headRX2 hattrR2 profRX2 pattrR2] = rtpread(frp);
 catch me
+  iBad = +1;
   me
   fprintf(1,'oops : error running sarta cloudy, look at ip/op rtp files %s %s \n',fip,fop)
   fprintf(1,'oops : error running sarta cloudy, look at error log %s \n',ugh2);
+  lser   = ['!ls -lth ' fip ' ' fop]; eval(lser);
+  catter = ['!more ' ugh2];  eval(catter)
   %keyboard
   error('woof! try again!')
 end
   
-rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh1 ' ' ugh2]; eval(rmer);
+if iBad < 0
+  rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh1 ' ' ugh2]; eval(rmer);
+end
 
 toc
 prof.rcalc = profRX2.rcalc;

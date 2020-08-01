@@ -17,7 +17,9 @@ badcc1  = find(p.cc > 1);   p.cc(badcc1) = 1;
 badciwc = find(p.ciwc < 0); p.ciwc(badciwc) = 0;
 badclwc = find(p.clwc < 0); p.clwc(badclwc) = 0;
 junk = [length(badtcc0) length(badtcc1) length(badcc0) length(badcc1) length(badciwc) length(badclwc)];
-fprintf(1,'found %4i/%4i tcc <0/1> %4i/%4i cc <0/1> %4i/%4i negative ciwc/clwc \n',junk);
+if run_sarta.talk == 1  
+  fprintf(1,'found %4i/%4i tcc <0/1> %4i/%4i cc <0/1> %4i/%4i negative ciwc/clwc \n',junk);
+end
 
 if sum(size(p.ptemp) - size(p.cc)) ~= 0 | sum(size(p.ptemp) - size(p.ciwc)) ~= 0 | sum(size(p.ptemp) - size(p.clwc)) ~= 0
   pjunk.cc    = p.cc;
@@ -94,7 +96,9 @@ end
 
 %% sets fracs and particle effective sizes eg cfrac2
 prof = set_fracs_deffs(head,prof,profX,cmin,cngwat_max,run_sarta.cfrac,run_sarta.randomCpsize);
-fprintf(1,'when setting cloud ice/water ODs, use iNew_or_Orig_CXWC2OD = %2i \n',run_sarta.iNew_or_Orig_CXWC2OD)
+if run_sarta.talk == 1  
+  fprintf(1,'when setting cloud ice/water ODs, use iNew_or_Orig_CXWC2OD = %2i \n',run_sarta.iNew_or_Orig_CXWC2OD)
+end
 
 if run_sarta.cumsum == -1
   %% find cumulative OD, basically same as reset_cprtop_cloudOD
@@ -112,17 +116,18 @@ else
     profXYZ = prof;
     prof = reset_cprtop(prof);
   elseif run_sarta.cumsum > 1 & run_sarta.cumsum < 9999
-    %% set cloud top according to where cumulative cloud OD = run_sarta.cumsum/100 so input param to reset_cprtop_cloudOD is between 0 and 100, 
+    %% set cloud top according to where cumulative cloud OD = run_sarta.cumsum/100 
+    %% so input param to reset_cprtop_cloudOD is between 0 and 100, 
     profXYZ = prof;
     %% same as next case, but note cumsumOD/100   --- then sarta_level_ice_water_OD_1.m, do_the_reset_cprtop_cloudOD are different  
-    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum/100,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD);
+    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum/100,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
   elseif abs(run_sarta.cumsum) == 9999
     %% set cloud top according to where cumulative cloud OD = run_sarta.cumsum/100, 
     %%      or if >= +/- 9999, set at peak of cloud wgt fcn
     profXYZ = prof;
     %plotclouds(prof,1,2,'init')
     %% same as prev case, but note cumsum         --- then sarta_level_ice_water_OD_1.m, do_the_reset_cprtop_cloudOD are different    
-    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD);
+    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
     %if run_sarta.cumsum == +9999
     %  plotclouds(prof,3,4,'cumsum = +9999')
     %elseif run_sarta.cumsum == -9999
@@ -147,14 +152,18 @@ if iDebugMain > 0
   keyboard
 end
 
-disp('---> checking cprtop vs cprbot vs spres')
+if run_sarta.talk == 1
+  disp('---> checking cprtop vs cprbot vs spres')
+end
 iNotOK = +1;
 iFix = 0;
 %% before used to give up at iFix == 10
 while iFix < 12 & iNotOK > 0
   iFix = iFix + 1;
-  fprintf(1,' doing n = %2i try at checking clouds \n',iFix)  
-  [prof,iNotOK] = check_for_errors(prof,run_sarta.cfrac,iFix);  %% see possible pitfalls in clouds
+  if run_sarta.talk == 1
+    fprintf(1,' doing n = %2i try at checking clouds \n',iFix)  
+  end
+  [prof,iNotOK] = check_for_errors(prof,run_sarta.cfrac,iFix,run_sarta.talk);  %% see possible pitfalls in clouds
 end
 if iFix >= 12 & iNotOK > 0
   %disp('oops, could not fix cprtop vs cprbot vs spres'); %keyboard

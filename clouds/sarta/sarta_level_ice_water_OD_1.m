@@ -7,9 +7,9 @@ function p1 = sarta_level_ice_water_OD_1(iceOD,waterOD,cumsumOD,p1x,ii);
 
 p1 = p1x;
 
-ciwc = p1.ciwc(:,ii);
-clwc = p1.clwc(:,ii);
-cc   = p1.cc(:,ii);
+ciwc  = p1.ciwc(:,ii);
+clwc  = p1.clwc(:,ii);
+cc    = p1.cc(:,ii);
 ptemp = p1.ptemp(:,ii);
 gas_1 = p1.gas_1(:,ii);
 press = p1.plevs(:,ii);
@@ -27,7 +27,7 @@ end
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-icesum = cumsum(iceOD);
+icesum   = cumsum(iceOD);
 watersum = cumsum(waterOD);
 
 if abs(cumsumOD) <= 99

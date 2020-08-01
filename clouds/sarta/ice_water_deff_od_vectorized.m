@@ -1,4 +1,4 @@
-function [p1,iceOD,waterOD] = ice_water_deff_od(p0,airslevels,airsheights,ii,iNew_or_Orig_CXWC2OD)
+function [p1,iceOD,waterOD] = ice_water_deff_od(p0,airslevels,airsheights,iNew_or_Orig_CXWC2OD)
 
 if nargin == 4
   iNew_or_Orig_CXWC2OD =  0;  %%% change to OD = blah * qBlah / cc * diffZ; OD(cc < 1e-3) = 0 WHAT PCRTM DOES
@@ -21,44 +21,45 @@ c3 = 0.0012;
 
 p1 = p0;
 
-ciwc  = p0.ciwc(:,ii);
-clwc  = p0.clwc(:,ii);
-cc    = p0.cc(:,ii);
-ptemp = p0.ptemp(:,ii);
-gas_1 = p0.gas_1(:,ii);
-press = p0.plevs(:,ii);
+ciwc  = p0.ciwc;
+clwc  = p0.clwc;
+cc    = p0.cc;
+ptemp = p0.ptemp;
+gas_1 = p0.gas_1;
+press = p0.plevs;
 
+pressN = press(:,1);
 %% code works assming press(1) < press(2) etc ie TOA is at LVL1, GND = LVLN
-if press(1) > press(2)
-  [Y,I] = sort(press);
-  clwc  = clwc(I);
-  ciwc  = ciwc(I);
-  cc    = cc(I);
-  ptemp = ptemp(I);
-  gas_1 = gas_1(I);
-  press = press(I);
+if pressN(1) > pressN(2)
+  clwc  = flipud(clwc);
+  ciwc  = flipud(ciwc);
+  cc    = flipud(cc);
+  ptemp = flipud(ptemp);
+  gas_1 = flipud(gas_1);
+  press = flipud(press);
 end
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-tcld = ptemp - 273.16;                   %% change to deg C
+tcld = ptemp - 273.16;                    %% change to deg C
 boo  = find(tcld < -50); tcld(boo) = -50; %% set minimum as -50 C
 boo  = find(tcld > -25); tcld(boo) = -25; %% set maximum as -50 C
 
-tav    = (ptemp(1:end-1)+ptemp(2:end))/2; tav(end) = ptemp(end);
-pav    = (press(1:end-1)+press(2:end))/2; pav(end) = press(end);
+[mm,nn] = size(ptemp);
+tav    = (ptemp(1:mm-1,:)+ptemp(2:mm,:))/2; tav(mm,:) = ptemp(mm,:);
+pav    = (press(1:mm-1,:)+press(2:mm,:))/2; pav(mm,:) = press(mm,:);
 scaleH = R*tav/g/1000;    %% in km
-dz     = scaleH .* log(press(2:end)./press(1:end-1)); dz(length(dz)+1) = 0;
-Z      = cumsum(dz);
-diffZ  = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
+dz     = scaleH(1:mm-1,:) .* log(press(2:mm,:)./press(1:mm-1,:)); dz(mm,:) = 0;
+Z      = cumsum(dz,1);
+diffZ  = abs(diff(Z,1)); diffZ(mm,:) = diffZ(mm-1,:);
 
 %% bugfix on 6.3.2013 ... this was mistakenly ptemp before early June, 2013
 Z     = p2hFAST(press,airslevels,airsheights)/1000;
 %whos press airslevels airsheights
-diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
+diffZ = abs(diff(Z,1)); diffZ(mm,:) = diffZ(mm-1,:);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-p1.sarta_lvlZ(:,ii) = Z;
+p1.sarta_lvlZ = Z;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -85,10 +86,10 @@ iceOD(bad) = 0.0;
 %figure(3); plot(iceOD);     title('iceOD 0'); disp('ret'); pause
 
 bad = find(isnan(cld_de_ice)); cld_de_ice(bad) = -9999;
-p1.sarta_lvlDMEice(:,ii) = cld_de_ice;
+p1.sarta_lvlDMEice = cld_de_ice;
 
 bad = find(isnan(iceOD) | isinf(iceOD)); iceOD(bad) = 0;
-p1.sarta_lvlODice(:,ii) = iceOD;
+p1.sarta_lvlODice = iceOD;
 
 %figure(3); plot(iceOD);     title('iceOD F'); disp('ret'); pause
 
@@ -108,9 +109,9 @@ elseif iNew_or_Orig_CXWC2OD == +1
 end
 
 bad = find(isnan(cld_de_liq)); cld_de_liq(bad) = -9999;
-p1.sarta_lvlDMEwater(:,ii) = cld_de_liq;
+p1.sarta_lvlDMEwater = cld_de_liq;
 
 bad = find(isnan(waterOD) | isinf(waterOD)); waterOD(bad) = 0;
-p1.sarta_lvlODwater(:,ii) = waterOD;
+p1.sarta_lvlODwater = waterOD;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

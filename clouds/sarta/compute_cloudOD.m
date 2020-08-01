@@ -12,9 +12,6 @@ disp('computing level ODs')
 
 %% computes cloud ODs based on formulas given by Xianglei and Xiuhong
 %% see PCRTM_compute_for_AIRS_spectra.m
-%%
-%%
-%%
 
 p1 = p0;
 p1.orig_ctop  = p1.cprtop;

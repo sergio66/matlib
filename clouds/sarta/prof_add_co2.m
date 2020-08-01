@@ -20,11 +20,15 @@ if run_sarta.co2ppm == -1
 elseif run_sarta.co2ppm == 0
   co2     = ones(size(prof.stemp)) * 385;
 elseif run_sarta.co2ppm > 0
-  co2     = ones(size(prof.stemp)) * run_sarta.co2ppm;
+  if length(run_sarta.co2ppm) == length(prof.stemp)
+    co2 = run_sarta.co2ppm;
+  else
+    co2 = ones(size(prof.stemp)) * mean(run_sarta.co2ppm);
+  end
 end
 
 if ~isfield(prof,'gas_2') & length(intersect(h.glist,2)) == 0
-  fprintf(1,'adding in prof.co2ppm from run_sarta.co2ppm  = %2i \n',run_sarta.co2ppm)
+  fprintf(1,'adding in prof.co2ppm from run_sarta.co2ppm  = %6.2f \n',mean(run_sarta.co2ppm))
   prof.co2ppm = co2;
 else
   disp('in driver_sarta_cloud_rtp.m we ALREADY have gas2 in h,p')

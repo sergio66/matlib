@@ -1,4 +1,4 @@
-function [prof,iNotOK,ibadlist] = check_for_errors(pin,cfracSet,iFixLoop)
+function [prof,iNotOK,ibadlist] = check_for_errors(pin,cfracSet,iFixLoop,talk)
 
 iNotOK = 0;
 prof = pin;
@@ -6,7 +6,7 @@ ibadlist = [];
 
 if iFixLoop == 10
   disp(' ')
-  disp('  oh oh iFixLoop == 10, getting into dangerouns territory here, resetting clouds!!!')
+  disp('  oh oh iFixLoop == 10, check_for_errors.m getting into dangerous territory here, resetting clouds!!!')
   disp(' ')
 end
 
@@ -141,10 +141,15 @@ for ii = 1 : length(ibadX)
     prof.ctype2(ij)  = junk1;    
   end  
 end
-fprintf(1,'  was able to swap/fix %5i of %5i here .. re-checking\n',iCount3,length(ibadX))
+
+if talk == 1
+  fprintf(1,'  was able to swap/fix %5i of %5i here .. re-checking\n',iCount3,length(ibadX))
+end
 ibad2 = find(prof.cprbot >= prof.cprtop2 & prof.cprtop > 0 & prof.cprbot > 0 & prof.cprtop2 > 0 & prof.cngwat > 0 & prof.cngwat2 > 0);
 if iDebug > 0 & length(ibad2) > 0 & iFixLoop >= 10
-  disp('now why is it still messed up????')
+  if talk == 1
+    disp('now why is it still messed up????')
+  end
   com.mathworks.services.Prefs.setBooleanPref('EditorGraphicalDebugging',false)   
   keyboard
   plot(prof.cprtop2(ibad2)-pjunk.cprtop2(ibad2))

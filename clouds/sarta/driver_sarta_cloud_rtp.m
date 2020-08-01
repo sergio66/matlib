@@ -87,9 +87,11 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %                                   =  0 to use DEFAULT klayers = 385 (set in executable by Scott; equivalent to run_sarta.co2ppm = +385)
 %                   this is done to keep it consistent with PCRTM
 %                   however, also have to make sure this is only enabled if h.glist does NOT include gas_2
-%      ForceNewSlabs                = -1 (default) to keep any slab clouds that are input, as they are
+%      run_sarta.ForceNewSlabs      = -1 (default) to keep any slab clouds that are input, as they are
 %                                   = +1           to force new slabs to be derived from clwc,ciwc,cc
-%      Slab_or_100layer             = +1 for slab clouds/-1 for 100 layer clouds (which then need their own sarta,klayers,ncol,overlap)
+%      run_sarta.Slab_or_100layer   = +1 for slab clouds/-1 for 100 layer clouds (which then need their own sarta,klayers,ncol,overlap)
+%
+%      run_sarta.talk               = -1 for quiet (default) or +1 for talk
 %                                   
 % >>> test ONE cloud
 %     run_sarta.waterORice          = 0 (default, use both clouds)
@@ -228,15 +230,19 @@ end
 
 if iAlreadyExistSlabClds < 0
   %% need to add in slab cloud fields
-  disp(' >>>>>>>>>>>>> adding in slab cloud fields <<<<<<<<<<<<<<<<<')
+  if run_sarta.talk == +1  
+    disp(' >>>>>>>>>>>>> adding in slab cloud fields <<<<<<<<<<<<<<<<<')
+  end
   [orig_slabs,p] = get_orig_slabs_info(p,run_sarta);
   prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx); 
 elseif iAlreadyExistSlabClds > 0
   %% slab cloud fields already exist, just run klayers and sarta
-  disp(' >>>>>>>>>>>>> slab cloud fields already exist; simply running klayers and sarta <<<<<<<<<<<<<<<<<')
+  if run_sarta.talk == +1
+    disp(' >>>>>>>>>>>>> slab cloud fields already exist; simply running klayers and sarta <<<<<<<<<<<<<<<<<')
+  end
   orig_slabs = [];
   prof = main_compute_sarta_rads(h,ha,p,pa,pINPUT,run_sarta);
 end
 
 tnow = toc;
-fprintf(1,'TOTAL : %8.6f minutes to process \n',tnow/60);
+fprintf(1,'TOTAL : %8.6f minutes to process .. exiting driver_sarta_cloud_rtp.m \n',tnow/60);

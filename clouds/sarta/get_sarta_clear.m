@@ -21,10 +21,10 @@ if ~exist(sarta,'file')
   error('sarta cloud exec done not exist')
 end
 
-fip = mktemp('temp.ip.rtp');
-fop = mktemp('temp.op.rtp');
-frp = mktemp('temp.rp.rtp');
-ugh = mktemp('ugh');
+fip = mktempS('temp.ip.rtp');
+fop = mktempS('temp.op.rtp');
+frp = mktempS('temp.rp.rtp');
+ugh = mktempS('ugh');
 
 rtpwrite(fip,h,ha,prof,pa);
 klayerser = ['!' klayers ' fin=' fip ' fout=' fop ' >& ' ugh];

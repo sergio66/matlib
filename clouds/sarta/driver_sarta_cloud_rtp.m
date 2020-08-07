@@ -165,6 +165,13 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
+iWhichInterp = 1;
+iWhichInterp = 0;
+
+fprintf(1,'driver_sarta_cloud_rtp.m : interp1(0) or interp1qr(1) = %2i \n',iWhichInterp)
+
 base_dir = fileparts(mfilename('fullpath')); % current directory
 base_dir1 = fileparts(base_dir);  % dir:  ../
 base_dir2 = fileparts(base_dir1); % dir:  ../../

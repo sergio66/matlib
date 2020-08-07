@@ -35,7 +35,11 @@ for ix = 1 : length(prof.stemp)
   yplevsA = yplevs(1:end-1)-yplevs(2:end);
   yplevsB = log(yplevs(1:end-1)./yplevs(2:end));
   yplevs  = yplevsA./yplevsB;
-  ycc     = interp1qr(log(xplevs),xcc,log(yplevs),[],'extrap');
+  if iWhichInterp == 0
+    ycc     = interp1(log(xplevs),xcc,log(yplevs),[],'extrap');
+  elseif iWhichInterp == 1
+    ycc     = interp1qr(log(xplevs),xcc,log(yplevs));
+  end
   ycc(ycc > 1) = 1;
   ycc(ycc < 0) = 0;
   pjunk.cc(1:101,ix) = 0;

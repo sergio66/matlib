@@ -24,6 +24,8 @@ function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airslay
 %% water_dme = 15;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 profX = profIN;  %% dummy copy
 prof  = profIN;  %% prof gets updated profile by profile, using "put_into_prof"
 
@@ -117,9 +119,15 @@ for iiiiA = 1:length(iiii)
     plevs = sort([plevs; plevsX]);
   end
 
-  watercld = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.clwc(xnlevs,ii),log10(plevs));
-  icecld   = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ciwc(xnlevs,ii),log10(plevs));
-  ptemp    = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ptemp(xnlevs,ii),log10(plevs));
+  if iWhichInterp == 0
+    watercld = interp1(log10(profX.plevs(xnlevs,ii)),profX.clwc(xnlevs,ii),log10(plevs));
+    icecld   = interp1(log10(profX.plevs(xnlevs,ii)),profX.ciwc(xnlevs,ii),log10(plevs));
+    ptemp    = interp1(log10(profX.plevs(xnlevs,ii)),profX.ptemp(xnlevs,ii),log10(plevs));
+  elseif iWhichInterp == 1
+    watercld = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.clwc(xnlevs,ii),log10(plevs));
+    icecld   = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ciwc(xnlevs,ii),log10(plevs));
+    ptemp    = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ptemp(xnlevs,ii),log10(plevs));
+  end
 
   if ~exist('aa','var')
     aa = [];

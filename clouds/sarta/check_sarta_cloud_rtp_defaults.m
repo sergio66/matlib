@@ -196,7 +196,11 @@ elseif run_sarta.ice_water_separator == +2
       palts = p.palts(:,ii);
     end
     boo = find(isfinite(plevs) & isfinite(palts));
-    pSEPARATE = interp1qr(palts(boo),log(plevs(boo)),1000*Y1(ii));
+    if iWhichInterp == 0
+      pSEPARATE = interp1(palts(boo),log(plevs(boo)),1000*Y1(ii));
+    else
+      pSEPARATE = interp1qr(palts(boo),log(plevs(boo)),1000*Y1(ii));
+    end
     pSEPARATE = exp(pSEPARATE);
     if pSEPARATE < 440
       pSEPARATE = 440;   %% else the cut off at the tropics is too high

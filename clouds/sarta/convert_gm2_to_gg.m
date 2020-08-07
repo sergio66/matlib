@@ -31,6 +31,8 @@ function [ciwc_clwc_gg_ecmwf] = convert_gm2_to_gg(pT, pB, cngwat_g_per_m2, plevs
 %%                                                     MASSF = 18     g/mol
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 airslevels  = aLH.airslevels;
 airsheights = aLH.airsheights;
 
@@ -74,8 +76,11 @@ for ii = 1 : length(pT)
     cB(ii) = cT(ii)+2;
   end
 
-  %tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
-  tnew = interp1qr(log(plevs),tlevs,log(airslevels));
+  %if iWhichInterp == 0
+  %  tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  %elseif iWhichInterp == 1
+  %  tnew = interp1qr(log(plevs),tlevs,log(airslevels));
+  %end
   jjT = find(airslevels <= plevs(cT(ii))); jjT = min(jjT);
   jjB = find(airslevels >= plevs(cB(ii))); jjB = max(jjB);
   jj = [jjB : jjT];

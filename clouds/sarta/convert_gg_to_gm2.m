@@ -72,6 +72,8 @@ function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ec
 
 % load airslevels.dat
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 Loschmidt = 2.6867775E+19; % molecules per cm^3 (at 1 atm and 273.15 K)
 kAvogadro = 6.022142E+26;  % molecules per kilomole
 T0        = 273.15;        % Kelvin
@@ -108,8 +110,11 @@ for ii = 1 : length(cT)
   %% CORRECT  : need to go back to "mr per layer"
   mr = ciwc_clwc_gg_ecmwf(ii)/(cB(ii)-cT(ii)+1);
 
-  %tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
-  tnew = interp1qr(log(plevs),tlevs,log(airslevels));
+  if iWhichInterp == 0
+    tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  elseif iWhichInterp == 1
+    tnew = interp1qr(log(plevs),tlevs,log(airslevels));
+  end
   jjT = find(airslevels <= plevs(cT(ii))); jjT = min(jjT);
   jjB = find(airslevels >= plevs(cB(ii))); jjB = max(jjB);
   jj = [jjB : jjT];

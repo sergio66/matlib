@@ -27,6 +27,8 @@ function [t] = rtp_t_at_p_sarta2slab(p, head, prof, lextrap);
   % Update: 05 Mar 2009, S.Hannon - change p from [1 x 1] to [1 x n]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 if (nargin < 3)
    disp('Error in rtp_t_at_p_sarta2slab: insufficient arguments')
    return
@@ -113,14 +115,24 @@ nok = length(iok);
 
 % Loop over profiles for processing
 if (nok > 0)
-   for ii = 1:nok
-      ip = iok(ii);
-      lnp = log(px(ip));
-      ind = 1:nlevs(ip);
-      lnpin = log(pl(ind,ip));
-      tin = ptemp(ind,ip);
-      %t(ip) = interp1qr(lnpin, tin, lnp, 'linear','extrap');
-      t(ip) = interp1qr(lnpin, tin, lnp);
+   if iWhichInterp == 0
+     for ii = 1:nok
+        ip = iok(ii);
+        lnp = log(px(ip));
+        ind = 1:nlevs(ip);
+        lnpin = log(pl(ind,ip));
+        tin = ptemp(ind,ip);
+        t(ip) = interp1(lnpin, tin, lnp, 'linear','extrap');
+      end
+   elseif iWhichInterp == 1
+     for ii = 1:nok
+        ip = iok(ii);
+        lnp = log(px(ip));
+        ind = 1:nlevs(ip);
+        lnpin = log(pl(ind,ip));
+        tin = ptemp(ind,ip);
+        t(ip) = interp1qr(lnpin, tin, lnp);
+      end
    end
 end
 %%% end of function %%%

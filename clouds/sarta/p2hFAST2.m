@@ -1,6 +1,8 @@
 function [h12] = p2hFAST2(pin1,pin2,airslevels,airslayers,airsheights)
 %this function takes pressure in mb, and converts to height in m
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 % load airsheights.dat
 % load airslevels.dat
 
@@ -22,7 +24,11 @@ pavg = airslayers;
 %end  
 %plot(h,pavg)
 
-h12 = interp1qr(pavg,h,[pin1 pin2]);
+if iWhichInterp == 0
+  h12 = interp1(pavg,h,[pin1 pin2]);
+elseif iWhichInterp == 1
+  h12 = interp1qr(pavg,h*ones(1,2),[pin1 pin2]');
+end
 
 %if ((isnan(h12)) | h12 > 7.05e4)
 %  h12  =  8.09e4;

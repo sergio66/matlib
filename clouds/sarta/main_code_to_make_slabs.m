@@ -62,18 +62,24 @@ end
 load airsheights.dat
 load airslevels.dat
 
+airsheights = flipud(airsheights);
+airslevels  = flipud(airslevels);
+playsN = airslevels(1:end-1)-airslevels(2:end);
+playsD = log(airslevels(1:end-1)./airslevels(2:end));
+airslayers = playsN./playsD;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 head  = h;
 
 tic
 if nlev_std <= 1e-3
-  [prof,profX] = ecmwfcld2sartacld(p,nlev,run_sarta.cumsum,airslevels,airsheights,run_sarta.ice_water_separator);   %% figure the two slab cloud 
+  [prof,profX] = ecmwfcld2sartacld(p,nlev,run_sarta.cumsum,airslevels,airslayers,airsheights,run_sarta.ice_water_separator);   %% figure the two slab cloud 
                     %% profile info here, using profX
                     %% this then puts the info into "prof" by calling put_into_prof w/in routine
 else
   disp('oops : code assumes ERA (37 levs) or ECMWF (91 levs) or other constant numlevs model, need to use varying levels (MERRA??)')
-  [prof,profX] = ecmwfcld2sartacld_varNlev(p,nlev,run_sarta.cumsum,airslevels,airsheights,run_sarta.ice_water_separator);   %% figure the two slab cloud 
+  [prof,profX] = ecmwfcld2sartacld_varNlev(p,nlev,run_sarta.cumsum,airslevels,airslayers,airsheights,run_sarta.ice_water_separator);   %% figure the two slab cloud 
                     %% profile info here, using profX
                     %% this then puts the info into "prof" by calling put_into_prof w/in routine
 end
@@ -104,7 +110,7 @@ if run_sarta.cumsum == -1
   %% find cumulative OD, basically same as reset_cprtop_cloudOD
   profXYZ = prof;
   %plotclouds(prof,5,6,'init')
-  prof = compute_cloudOD(prof,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD);
+  prof = compute_cloudOD(prof,airslevels,airslayers,airsheights,run_sarta.iNew_or_Orig_CXWC2OD);
   %plotclouds(prof,7,8,'cumsum = -1')  
 else
   %% ecmwfcld2sartacld.m -- > new_style_smooth_cc_ciwc_clwc_to_water_ice_profile --> cloud_mean_press 
@@ -120,14 +126,14 @@ else
     %% so input param to reset_cprtop_cloudOD is between 0 and 100, 
     profXYZ = prof;
     %% same as next case, but note cumsumOD/100   --- then sarta_level_ice_water_OD_1.m, do_the_reset_cprtop_cloudOD are different  
-    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum/100,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
+    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum/100,airslevels,airslayers,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
   elseif abs(run_sarta.cumsum) == 9999
     %% set cloud top according to where cumulative cloud OD = run_sarta.cumsum/100, 
     %%      or if >= +/- 9999, set at peak of cloud wgt fcn
     profXYZ = prof;
     %plotclouds(prof,1,2,'init')
     %% same as prev case, but note cumsum         --- then sarta_level_ice_water_OD_1.m, do_the_reset_cprtop_cloudOD are different    
-    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum,airslevels,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
+    prof = reset_cprtop_cloudOD(prof,run_sarta.cumsum,airslevels,airslayers,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,run_sarta);
     %if run_sarta.cumsum == +9999
     %  plotclouds(prof,3,4,'cumsum = +9999')
     %elseif run_sarta.cumsum == -9999

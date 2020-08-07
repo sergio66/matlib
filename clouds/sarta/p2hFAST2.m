@@ -1,4 +1,4 @@
-function ht = p2hFAST(pin,airslevels,airslayers,airsheights)
+function [h12] = p2hFAST2(pin1,pin2,airslevels,airslayers,airsheights)
 %this function takes pressure in mb, and converts to height in m
 
 % load airsheights.dat
@@ -22,21 +22,12 @@ pavg = airslayers;
 %end  
 %plot(h,pavg)
 
-%ht0 = interp1(pavg,h,pin);
-[mm,nn] = size(pin);
-if mm*nn == 1
-  ht = interp1qr(pavg,h,pin);
-  %subplot(121); loglog(pin,ht0,'b',pin,ht,'r'); 
-  %subplot(122); semilogy(ht0-ht,pin,'r'); 
-  %pause(0.1)
-elseif mm*nn > 1
-  ht = interp1qr(pavg,h*ones(1,nn),pin);
-end
+h12 = interp1qr(pavg,h,[pin1 pin2]);
 
-%if ((isnan(ht)) | ht > 7.05e4)
-%  ht  =  8.09e4;
+%if ((isnan(h12)) | h12 > 7.05e4)
+%  h12  =  8.09e4;
 %end
 
-bad = find(isinf(ht) | isnan(ht) | ht > 8.09e4);
-ht(bad) = 8.09e4;
+bad = find(isinf(h12) | isnan(h12) | h12 > 8.09e4);
+h12(bad) = 8.09e4;
 

@@ -57,7 +57,7 @@ if iExample > 0
   plot(x,yIN)
 end
 
-clear wT wB
+%clear wT wB
 peakN = [0 0 0];
 
 if iDoPlot > 0

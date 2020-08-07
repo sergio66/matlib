@@ -1,5 +1,5 @@
 function prof = put_into_prof(pin,profX,ii,jj,plevs,ptemp,iLevsVers,...
-                              cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airsheights)
+                              cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airslayers,airsheights)
 
 % When two clouds are present, the meaning of cfrac1 and cfrac2
 % are the total fraction of the FOV containing that cloud in
@@ -67,7 +67,7 @@ if length(cTYPE) == 1
 
   icefound   = -1;
   waterfound = -1;
-  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airsheights);
+  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airslayers,airsheights);
 
   kk = 1;
 
@@ -109,7 +109,7 @@ if length(cTYPE) == 2
 
   icefound   = -1;
   waterfound = -1;
-  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airsheights);
+  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airslayers,airsheights);
 
 if length(find(isnan(cc))) > 0
   disp('length(find(isnan(cc))) > 0 in put_into_prof')

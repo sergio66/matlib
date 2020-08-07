@@ -98,9 +98,12 @@ for ii = 1:ni
    % Interpolate data to a 10 point grid spanning pbot to ptop
    dp = (pbot(ip) - ptop(ip))/9;
    pgrid = pbot(ip) - (0:9)*dp;
-   tgrid = interp1(plevs(:,ip),ptemp(:,ip),pgrid,'linear','extrap');
-   cgrid = interp1(plevs(:,ip),   CC(:,ip),pgrid,'linear','extrap');
-   igrid = interp1(plevs(:,ip), CIWC(:,ip),pgrid,'linear','extrap');
+   %tgrid = interp1(plevs(:,ip),ptemp(:,ip),pgrid,'linear','extrap');
+   %cgrid = interp1(plevs(:,ip),   CC(:,ip),pgrid,'linear','extrap');
+   %igrid = interp1(plevs(:,ip), CIWC(:,ip),pgrid,'linear','extrap');
+   tgrid = interp1qr(plevs(:,ip),ptemp(:,ip),pgrid);
+   cgrid = interp1qr(plevs(:,ip),   CC(:,ip),pgrid);
+   igrid = interp1qr(plevs(:,ip), CIWC(:,ip),pgrid);
 
    % Weight first and last point half as much as other points
    igrid( 1) = 0.5*igrid(1);
@@ -127,9 +130,12 @@ for ii = 1:nw
    % Interpolate data to a 10 point grid spanning pbot to ptop
    dp = (pbot(ip) - ptop(ip))/9;
    pgrid = pbot(ip) - (0:9)*dp;
-   tgrid = interp1(plevs(:,ip),ptemp(:,ip),pgrid,'linear','extrap');
-   cgrid = interp1(plevs(:,ip),   CC(:,ip),pgrid,'linear','extrap');
-   wgrid = interp1(plevs(:,ip), CLWC(:,ip),pgrid,'linear','extrap');
+   %tgrid = interp1(plevs(:,ip),ptemp(:,ip),pgrid,'linear','extrap');
+   %cgrid = interp1(plevs(:,ip),   CC(:,ip),pgrid,'linear','extrap');
+   %wgrid = interp1(plevs(:,ip), CLWC(:,ip),pgrid,'linear','extrap');
+   tgrid = interp1qr(plevs(:,ip),ptemp(:,ip),pgrid);
+   cgrid = interp1qr(plevs(:,ip),   CC(:,ip),pgrid);
+   wgrid = interp1qr(plevs(:,ip), CLWC(:,ip),pgrid);
 
    % Weight first and last point half as much as other points
    wgrid( 1) = 0.5*wgrid(1);

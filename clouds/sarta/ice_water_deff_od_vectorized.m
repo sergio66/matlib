@@ -1,4 +1,4 @@
-function [p1,iceOD,waterOD] = ice_water_deff_od(p0,airslevels,airsheights,iNew_or_Orig_CXWC2OD)
+function [p1,iceOD,waterOD,extrajunk] = ice_water_deff_od(p0,airslevels,airslayers,airsheights,iNew_or_Orig_CXWC2OD)
 
 if nargin == 4
   iNew_or_Orig_CXWC2OD =  0;  %%% change to OD = blah * qBlah / cc * diffZ; OD(cc < 1e-3) = 0 WHAT PCRTM DOES
@@ -53,12 +53,20 @@ Z      = cumsum(dz,1);
 diffZ  = abs(diff(Z,1)); diffZ(mm,:) = diffZ(mm-1,:);
 
 %% bugfix on 6.3.2013 ... this was mistakenly ptemp before early June, 2013
-Z     = p2hFAST(press,airslevels,airsheights)/1000;
+Z     = p2hFAST(press,airslevels,airslayers,airsheights)/1000;
 %whos press airslevels airsheights
 diffZ = abs(diff(Z,1)); diffZ(mm,:) = diffZ(mm-1,:);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if nargout == 4
+  extrajunk.tav = tav;
+  extrajunk.pav = pav;
+  extrajunk.scaleH = scaleH;
+  extrajunk.Z = Z;
+  extrajunk.diffZ = diffZ;
+end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
 p1.sarta_lvlZ = Z;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,28 +1,28 @@
 if iN > 3
-  [iN,iOUT,iT,iB,iPeak] = combine_clouds4t3(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airsheights);
+  [iN,iOUT,iT,iB,iPeak] = combine_clouds4t3(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airslayers,airsheights);
 end
 if wN > 3
-  [wN,wOUT,wT,wB,wPeak] = combine_clouds4t3(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airsheights);
+  [wN,wOUT,wT,wB,wPeak] = combine_clouds4t3(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airslayers,airsheights);
 end
 
 if iN > 2
-  [iN,iOUT,iT,iB,iPeak] = combine_clouds3t2(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airsheights);
+  [iN,iOUT,iT,iB,iPeak] = combine_clouds3t2(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airslayers,airsheights);
 end
 if wN > 2
-  [wN,wOUT,wT,wB,wPeak] = combine_clouds3t2(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airsheights);
+  [wN,wOUT,wT,wB,wPeak] = combine_clouds3t2(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airslayers,airsheights);
 end
 
 if ((iN == 1 & wN == 2) | (iN == 2 & wN == 1) | (iN == 2 & wN == 2))
   if iN == 2
-    [iN,iOUT,iT,iB,iPeak] = combine_clouds2t1(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airsheights);
+    [iN,iOUT,iT,iB,iPeak] = combine_clouds2t1(iN,iOUT,iT,iB,iPeak,plevs,airslevels,airslayers,airsheights);
   end
   if wN == 2
-    [wN,wOUT,wT,wB,wPeak] = combine_clouds2t1(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airsheights);  
+    [wN,wOUT,wT,wB,wPeak] = combine_clouds2t1(wN,wOUT,wT,wB,wPeak,plevs,airslevels,airslayers,airsheights);  
   end
 end
 
 [cT,cB,cOUT,cngwat,cTYPE,iFound] = combine_clouds(...
-            iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,profX.plevs(:,ii),airslevels,airsheights);
+            iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,profX.plevs(:,ii),airslevels,airslayers,airsheights);
 iTT = iT; if length(iTT) == 0; iTT = -1; end
 iBB = iB; if length(iBB) == 0; iBB = -1; end
 wTT = wT; if length(wTT) == 0; wTT = -1; end

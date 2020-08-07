@@ -74,7 +74,8 @@ for ii = 1 : length(pT)
     cB(ii) = cT(ii)+2;
   end
 
-  tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  %tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  tnew = interp1qr(log(plevs),tlevs,log(airslevels));
   jjT = find(airslevels <= plevs(cT(ii))); jjT = min(jjT);
   jjB = find(airslevels >= plevs(cB(ii))); jjB = max(jjB);
   jj = [jjB : jjT];

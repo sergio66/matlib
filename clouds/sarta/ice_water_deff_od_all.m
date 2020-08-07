@@ -1,4 +1,4 @@
-function [p1,iceOD,waterOD] = ice_water_deff_od(p0,airslevels,airsheights,iNew_or_Orig_CXWC2OD)
+function [p1,iceOD,waterOD] = ice_water_deff_od(p0,airslevels,airslayers,airsheights,iNew_or_Orig_CXWC2OD)
 
 if nargin == 3
   iNew_or_Orig_CXWC2OD =  0;  %%% change to OD = blah * qBlah / cc * diffZ; OD(cc < 1e-3) = 0 WHAT PCRTM DOES
@@ -53,7 +53,7 @@ for ii = 1 : length(p0.stemp)
   diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 
   %% bugfix on 6.3.2013 ... this was mistakenly ptemp before early June, 2013
-  Z = p2hFAST(press,airslevels,airsheights)/1000;
+  Z = p2hFAST(press,airslevels,airslayers,airsheights)/1000;
   %whos press airslevels airsheights
   diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 

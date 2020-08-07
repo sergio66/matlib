@@ -164,7 +164,14 @@ end
 %% and add on aux info, such as OD etc
 load airsheights.dat
 load airslevels.dat
-prof = cloudOD_for100layer(prof,run_sarta.cumsum/100,airslevels,airsheights);
+
+airsheights = flipud(airsheights);
+airslevels  = flipud(airslevels);
+playsN = airslevels(1:end-1)-airslevels(2:end);
+playsD = log(airslevels(1:end-1)./airslevels(2:end));
+airslayers = playsN./playsD;
+
+prof = cloudOD_for100layer(prof,run_sarta.cumsum/100,airslevels,airslayers,airsheights);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -1,4 +1,4 @@
-function p1 = reset_cprtop_cloudOD(p0,cumsumOD,airslevels,airsheights,iNew_or_Orig_CXWC2OD,run_sarta);
+function p1 = reset_cprtop_cloudOD(p0,cumsumOD,airslevels,airslayers,airsheights,iNew_or_Orig_CXWC2OD,run_sarta);
 
 %% basically same as reset_cprtop_cloudOD.m
 %% first part is same as compute_cloudOD.m but then this routine does much more
@@ -45,31 +45,53 @@ if run_sarta.talk == 1
   disp('    computing ice/water ODs at each level, each profile .... ')
 end
 
-iFastOrSlow = +1;
-if iFastOrSlow > 0
+iFastOrSlow = 0;   %% do both for debug
+iFastOrSlow = -1;  %% slow old way
+iFastOrSlow = +1;  %% fast new way
+if iFastOrSlow >= 0
   %toc
-  [p1Fast,iceOD,waterOD] = ice_water_deff_od_vectorized(p1,airslevels,airsheights,iNew_or_Orig_CXWC2OD);
+  [p1Fast,iceODFast,waterODFast] = ice_water_deff_od_vectorized(p1,airslevels,airslayers,airsheights,iNew_or_Orig_CXWC2OD);
   %toc
-  p1Fast                 = sarta_level_ice_water_OD_1_vectorized(iceOD,waterOD,cumsumOD,p1Fast);
+  p1Fast                 = sarta_level_ice_water_OD_1_vectorized(iceODFast,waterODFast,cumsumOD,p1Fast);
   %toc
-else
-  for ii = 1 : length(p0.stemp)
-    [p1Slow,iceOD,waterOD] = ice_water_deff_od(p1,airslevels,airsheights,ii,iNew_or_Orig_CXWC2OD);
-    p1Slow = sarta_level_ice_water_OD_1(iceOD,waterOD,cumsumOD,p1Slow,ii); %% NOTE THE cumsumOD here -- have to be careful in calling routine
-                                                                           %% it may be looking for 0 <= cumsumOD <= 9999/100 
-                                                                           %%   in which case it is looking for that value of cumulative OD 
-                                                                           %%   from TOA to GND
-                                                                           %% it may be looking for abs(cumsumOD) = 9999      
-                                                                           %%   in which case it is looking for cumulative OD from TOA to GND == 1
-               							           %% sets p1.sarta_lvl_iceOD_1, p1.sarta_lvl_waterOD_1
+end
+if iFastOrSlow <= 0
+  clear p1Slow iceODSlow* waterODSlow*
+  ii=1;
+    [p1Slow,iceODSlowX,waterODSlowX,extrajunk] = ice_water_deff_od(p1,airslevels,airslayers,airsheights,ii,iNew_or_Orig_CXWC2OD);
+    p1Slow = sarta_level_ice_water_OD_1(iceODSlowX,waterODSlowX,cumsumOD,p1Slow,ii); 
+    iceODSlow(:,ii)   = iceODSlowX;
+    waterODSlow(:,ii) = waterODSlowX;
+  for ii = 2 : length(p1.stemp)
+    [p1Slow,iceODSlowX,waterODSlowX,extrajunk] = ice_water_deff_od(p1Slow,airslevels,airslayers,airsheights,ii,iNew_or_Orig_CXWC2OD);
+    p1Slow = sarta_level_ice_water_OD_1(iceODSlowX,waterODSlowX,cumsumOD,p1Slow,ii); 
+           %% NOTE THE cumsumOD here -- have to be careful in calling routine
+           %% it may be looking for 0 <= cumsumOD <= 9999/100 
+           %%   in which case it is looking for that value of cumulative OD 
+           %%   from TOA to GND
+           %% it may be looking for abs(cumsumOD) = 9999      
+           %%   in which case it is looking for cumulative OD from TOA to GND == 1
+           %% sets p1.sarta_lvl_iceOD_1, p1.sarta_lvl_waterOD_1
+    iceODSlow(:,ii)   = iceODSlowX;
+    waterODSlow(:,ii) = waterODSlowX;
   end
   %toc
 end
 
 if iFastOrSlow == 1
   p1 = p1Fast;
-else
+elseif iFastOrSlow == -1
   p1 = p1Slow;
+else
+  clf
+  disp('debugging reset_cprtop_cloudOD.m')
+  plot(1:length(p0.stemp),sum(iceODFast,1)-sum(iceODSlow,1),1:length(p0.stemp),sum(waterODFast,1)-sum(waterODSlow,1)); title('\delta icOD,waterOD')
+    [sum(sum(iceODFast,1)-sum(iceODSlow,1)) sum(sum(waterODFast,1)-sum(waterODSlow,1))]
+    [sum(sum(p1Fast.sarta_lvlDMEice-p1Slow.sarta_lvlDMEice)) sum(sum(p1Fast.sarta_lvlDMEwater-p1Slow.sarta_lvlDMEwater))]
+    [sum(sum(p1Fast.sarta_lvlODice-p1Slow.sarta_lvlODice)) sum(sum(p1Fast.sarta_lvlODwater-p1Slow.sarta_lvlODwater))]
+    [sum(p1Fast.sarta_lvl_iceOD_1-p1Slow.sarta_lvl_iceOD_1) sum(p1Fast.sarta_lvl_waterOD_1-p1Slow.sarta_lvl_waterOD_1)]
+  addpath /home/sergio/MATLABCODE
+  keyboard_nowindow
 end
 
 if iDebug > 0

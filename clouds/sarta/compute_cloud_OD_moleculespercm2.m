@@ -1,4 +1,4 @@
-function p1 = compute_cloud_OD_moleculespercm2(p0,airslevels,airsheights);
+function p1 = compute_cloud_OD_moleculespercm2(p0,airslevels,airslayers,airsheights);
 
 disp('ASSUMES LEVELS PROFILE ... computing level ODs and molecules/cm2')
 
@@ -122,7 +122,7 @@ for ii = 1 : length(p0.stemp)
   diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 
   %% bugfix on 6.3.2013 ... this was mistakenly ptemp before early June, 2013
-  Z = p2hFAST(press,airslevels,airsheights)/1000;
+  Z = p2hFAST(press,airslevels,airslayers,airsheights)/1000;
   diffZ = abs(diff(Z)); diffZ(length(diffZ)+1) = diffZ(length(diffZ));
 
   % compute ice cloud optical depth from Ebert and Curry (1992, J. Geophys. Res.,  

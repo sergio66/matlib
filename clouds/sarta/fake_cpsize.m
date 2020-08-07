@@ -10,7 +10,7 @@ function [cpsize] = fake_cpsize(temp, iceflag, randomCpsize);
 %    temp    = [1 x n] temperature {K}
 %    iceflag = [1 x n] ice flag {1=true, 0=false(liquid water)}
 %    randomCpsize= [1 x 1] optional randomization switch 
-%        {1=on, 0=off(default), 20=fix water at 20 um, -1 = modis water dme climatology}
+%        {0=off, 1=on(default), 20=fix water at 20 um, -1 = modis water dme climatology}
 %
 % Output:
 %    cpsize  = [1 x n] particle size(diameter) {um}

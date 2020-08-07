@@ -1,4 +1,4 @@
-function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ecmwf,plevs,tlevs,airslevels,airsheights) 
+function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ecmwf,plevs,tlevs,airslevels,airslayers,airsheights) 
 
 %% this is the conversion from ERA/ECM total profile g/g to SARTA slab g/m2
 %%
@@ -108,7 +108,8 @@ for ii = 1 : length(cT)
   %% CORRECT  : need to go back to "mr per layer"
   mr = ciwc_clwc_gg_ecmwf(ii)/(cB(ii)-cT(ii)+1);
 
-  tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  %tnew = interp1(log(plevs),tlevs,log(airslevels),'spline','extrap');
+  tnew = interp1qr(log(plevs),tlevs,log(airslevels));
   jjT = find(airslevels <= plevs(cT(ii))); jjT = min(jjT);
   jjB = find(airslevels >= plevs(cB(ii))); jjB = max(jjB);
   jj = [jjB : jjT];
@@ -128,9 +129,11 @@ for ii = 1 : length(cT)
       slope = (tB-tT)/(log(pB)-log(pT));
       Tnew = tB - slope*(log(pB)-log(pnew));
 
-      hB = p2hFAST(pB,airslevels,airsheights);
-      hT = p2hFAST(pTairslevels,airsheights);
-      dz = (hT - hB)*100;
+      %hB = p2hFAST(pB,airslevels,airslayers,airsheights);
+      %hT = p2hFAST(pT,airslevels,airslayers,airsheights);
+      %dz = (hT - hB)*100;
+      [hBT] = p2hFAST2(pB,pT,airslevels,airslayers,airsheights);
+      dz = (hBT(2) - hBT(1))*100;
 
       ppmv = mr * (MDAIR/MASSF)*1E+6;
       pp = ppmv/1e6 * pnew;  %%% use volume mix ratio rather than ppmv
@@ -154,9 +157,11 @@ for ii = 1 : length(cT)
   % Told  = tB - (tB-tT)/2;  
   % [tT tB Told Tnew];
 
-  hB = p2hFAST(pB,airslevels,airsheights);
-  hT = p2hFAST(pT,airslevels,airsheights);
-  dz = (hT - hB)*100;
+  %hB = p2hFAST(pB,airslevels,airslayers,airsheights);
+  %hT = p2hFAST(pT,airslevels,airslayers,airsheights);
+  %dz = (hT - hB)*100;
+  [hBT] = p2hFAST2(pB,pT,airslevels,airslayers,airsheights);
+  dz = (hBT(2) - hBT(1))*100;
 
   % ppmv    = mr * (MDAIR/MASSF)*1E+6;
   % pp      = ppmv/1e6 * pold;                    %% use volume mix ratio rather than ppmv

@@ -1,6 +1,6 @@
 function [cT,cB,cOUT,cngwat,cTYPE,iFound] = combine_clouds(...
               iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,rlevs,...
-              airslevels,airsheights)
+              airslevels,airslayers,airsheights)
 
 % this takes in ICE  parameters iN,iOUT,iT,iB,iPeak
 %          and WATER parameters wN,wOUT,wT,wB,wPeak

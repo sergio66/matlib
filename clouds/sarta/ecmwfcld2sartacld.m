@@ -1,4 +1,4 @@
-function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airsheights,ice_water_separator);
+function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airslayers,airsheights,ice_water_separator);
 
 %% called by readecmwf91_grid/nearest_gasNcloud.m
 %%     "nlev" is set by readecmwf91_grid/nearest_gasNcloud
@@ -93,7 +93,7 @@ for iiiiA = 1:length(iiii)
 
   cloud_combine_main_code
   prof = put_into_prof(prof,profX,ii,jj,plevs,ptemp,iLevsVers,...
-                       cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airsheights);
+                       cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airslayers,airsheights);
 		       
 %{
 if ii == 21

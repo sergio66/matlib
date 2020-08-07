@@ -1,4 +1,4 @@
-function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airsheights);
+function [prof,profX] = ecmwfcld2sartacld(profIN,nlev,xcumsum,airslevels,airslayers,airsheights);
 
 %% called by readecmwf91_grid/nearest_gasNcloud.m
 %%     "nlev" is set by readecmwf91_grid/nearest_gasNcloud
@@ -117,9 +117,9 @@ for iiiiA = 1:length(iiii)
     plevs = sort([plevs; plevsX]);
   end
 
-  watercld = interp1(log10(profX.plevs(xnlevs,ii)),profX.clwc(xnlevs,ii),log10(plevs));
-  icecld   = interp1(log10(profX.plevs(xnlevs,ii)),profX.ciwc(xnlevs,ii),log10(plevs));
-  ptemp    = interp1(log10(profX.plevs(xnlevs,ii)),profX.ptemp(xnlevs,ii),log10(plevs));
+  watercld = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.clwc(xnlevs,ii),log10(plevs));
+  icecld   = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ciwc(xnlevs,ii),log10(plevs));
+  ptemp    = interp1qr(log10(profX.plevs(xnlevs,ii)),profX.ptemp(xnlevs,ii),log10(plevs));
 
   if ~exist('aa','var')
     aa = [];
@@ -168,7 +168,7 @@ for iiiiA = 1:length(iiii)
               iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,profX.plevs(xnlevs,ii),airslevels,airsheights);
 
   prof = put_into_prof(prof,profX,ii,jj,plevs,ptemp,iLevsVers,...
-                       cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airsheights);
+                       cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airslayers,airsheights);
 
   if iPrint > 0
     print_ecmwfcld2sartacld

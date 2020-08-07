@@ -67,11 +67,11 @@ prof.cc = profX.cc;
 pavg = 0.5*(prof.cprtop + prof.cprbot);
 ibad = find(prof.cfrac == 0);
 pavg(ibad) = 500; % safe dummy value
-tavg1 = rtp_t_at_p(pavg, head, prof);
+tavg1 = rtp_t_at_p_sarta2slab(pavg, head, prof);
 pavg = 0.5*(prof.cprtop2 + prof.cprbot2);
 ibad = find(prof.cfrac2 == 0);
 pavg(ibad) = 500; % safe dummy value
-tavg2 = rtp_t_at_p(pavg, head, prof);
+tavg2 = rtp_t_at_p_sarta2slab(pavg, head, prof);
 clear ibad
 
 %%%% >>>>>>>>>>>>>>>>>>>>>>>>> guts of cpsize setting >>>>>>>>>>>>>>>>>>>>>>>>>

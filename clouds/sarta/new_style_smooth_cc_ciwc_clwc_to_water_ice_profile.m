@@ -24,7 +24,7 @@ elseif ice_water_separator == 1 | ice_water_separator == 2
     palts = profX.palts(:,ii);
   end
   boo = find(isfinite(plevs) & isfinite(palts));
-  pSEPARATE = interp1(palts(boo),log(plevs(boo)),1000*Y1(ii));
+  pSEPARATE = interp1qr(palts(boo),log(plevs(boo)),1000*Y1(ii));
   pSEPARATE = exp(pSEPARATE);
   if pSEPARATE < 440
     pSEPARATE = 440;
@@ -66,9 +66,9 @@ else
   cut440 = find(plevs <= pSEPARATE,1);
 end
 
-watercld = interp1(log10(profX.plevs(:,ii)),profX.clwc(:,ii),log10(plevs));
-icecld   = interp1(log10(profX.plevs(:,ii)),profX.ciwc(:,ii),log10(plevs));
-ptemp    = interp1(log10(profX.plevs(:,ii)),profX.ptemp(:,ii),log10(plevs));
+watercld = interp1qr(log10(profX.plevs(:,ii)),profX.clwc(:,ii),log10(plevs));
+icecld   = interp1qr(log10(profX.plevs(:,ii)),profX.ciwc(:,ii),log10(plevs));
+ptemp    = interp1qr(log10(profX.plevs(:,ii)),profX.ptemp(:,ii),log10(plevs));
 
 %figure(2); clf;
 %  subplot(121); semilogy(icecld,plevs,'b',watercld,plevs,'r'); set(gca,'ydir','reverse');

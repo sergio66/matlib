@@ -92,6 +92,7 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %      run_sarta.Slab_or_100layer   = +1 for slab clouds/-1 for 100 layer clouds (which then need their own sarta,klayers,ncol,overlap)
 %
 %      run_sarta.talk               = -1 for quiet (default) or +1 for talk
+%      run_sarta.iWhichInterp       = 0 for Matlab interp1, 1 = interp1qr
 %                                   
 % >>> test ONE cloud
 %     run_sarta.waterORice          = 0 (default, use both clouds)
@@ -167,11 +168,6 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
 
-iWhichInterp = 1;
-iWhichInterp = 0;
-
-fprintf(1,'driver_sarta_cloud_rtp.m : interp1(0) or interp1qr(1) = %2i \n',iWhichInterp)
-
 base_dir = fileparts(mfilename('fullpath')); % current directory
 base_dir1 = fileparts(base_dir);  % dir:  ../
 base_dir2 = fileparts(base_dir1); % dir:  ../../
@@ -194,6 +190,8 @@ end
 cmin = otherstuff.cmin;             %% min allowed cfrac
 cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat
 iDebugMain = otherstuff.iDebugMain; %% to debug or not???
+
+fprintf(1,'driver_sarta_cloud_rtp.m : interp1(0) or interp1qr(1) = %2i \n',iWhichInterp)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

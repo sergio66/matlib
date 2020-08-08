@@ -19,6 +19,8 @@ function [p,run_sarta,otherstuff] = check_sarta_cloud_rtp_defaults(run_sarta0,h,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
 %% defaults
 
 run_sarta = run_sarta0;
@@ -67,6 +69,9 @@ if narginx == 4
 
   run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
   run_sarta.talk             = -1;     %% for quiet (default) or +1 for talk 
+  run_sarta.iWhichInterp     = +1;     %% interp1(0) or interp1qr(1)
+                                       %%  iWhichInterp = 0;  %% orig code  "slow"
+                                       %%  iWhichInterp = 1;  %% newer code "fast"
 
 elseif narginx == 5
   if ~isfield(run_sarta,'iNew_or_Orig_CXWC2OD')
@@ -113,8 +118,14 @@ elseif narginx == 5
     run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
   end
 
-  if ~isfield(run_sarta,'quiet')
+  if ~isfield(run_sarta,'talk')
      run_sarta.talk       = -1;  %% quiet
+  end
+
+  if ~isfield(run_sarta,'iWhichInterp')
+     run_sarta.iWhichInterp  = +1;  %% interp1(0) or interp1qr(1)
+                                    %%  iWhichInterp = 0;  %% orig code  "slow"
+                                    %%  iWhichInterp = 1;  %% newer code "fast"
   end
 
   if run_sarta.Slab_or_100layer == +1    %% run 2 slab clouds
@@ -144,6 +155,7 @@ elseif narginx == 5
   
 end
 
+iWhichInterp = run_sarta.iWhichInterp;  %% this is a global variable
 
 % Min allowed cloud fraction
 otherstuff.cmin = 0.0001;

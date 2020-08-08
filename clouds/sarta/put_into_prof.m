@@ -171,3 +171,8 @@ end
   end
 end
 
+%  if jj == 7329 | jj == 1
+%    cc
+%    cT
+%    cB
+%  end

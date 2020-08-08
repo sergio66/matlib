@@ -63,6 +63,8 @@ n = size(y,2);
 
 % For each 'xi', get the position of the 'x' element bounding it on the left [p x 1]
 [~,xi_pos] = histc(xi,x);
+[~,~,xi_pos2] = histcounts(xi, x);
+
 xi_pos = max(xi_pos,1);     % To avoid index=0 when xi < x(1)
 xi_pos = min(xi_pos,m-1);   % To avoid index=m+1 when xi > x(end).
 
@@ -70,6 +72,9 @@ xi_pos = min(xi_pos,m-1);   % To avoid index=m+1 when xi > x(end).
 dxi = xi-x(xi_pos);
 dx = x(xi_pos+1)-x(xi_pos);
 t = dxi./dx;
+
+%whos xi x xi_pos xi_pos2 t
+%[sum(sum(xi_pos-xi_pos2)) min(xi_pos(:)) max(xi_pos(:))]
 
 % Get 'yi'
 %%yi = y(xi_pos,:) + t(:,ones(1,n)).*(y(xi_pos+1,:)-y(xi_pos,:)); %%% ORIG CODE, buggy
@@ -79,9 +84,12 @@ t = dxi./dx;
 %%moo2 = (y(xi_pos+1,:)-y(xi_pos,:));
 %moo2 = (y(xi_pos+1)-y(xi_pos));
 %whos y t xi_pos moo1 moo2
-yi = y(xi_pos) + t(:,ones(1,n)).*(y(xi_pos+1)-y(xi_pos));
+%yi = y(xi_pos) + t(:,ones(1,n)).*(y(xi_pos+1)-y(xi_pos));
+yi = y(xi_pos) + t.*(y(xi_pos+1)-y(xi_pos));
 
 % Give NaN to the values of 'yi' corresponding to 'xi' out of the range of 'x'
-yi(xi<x(1) | xi>x(end),:) = NaN;
+% yi(xi<x(1) | xi>x(end),:) = NaN;
+yi(xi<x(1))   = y(1,1);
+yi(xi>x(end)) = y(m,1);
 
 end

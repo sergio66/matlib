@@ -69,7 +69,7 @@ if narginx == 4
 
   run_sarta.Slab_or_100layer = +1;     %% run Slab clouds
   run_sarta.talk             = -1;     %% for quiet (default) or +1 for talk 
-  run_sarta.iWhichInterp     = +1;     %% interp1(0) or interp1qr(1)
+  run_sarta.iWhichInterp     =  0;     %% interp1(0) or interp1qr(1)
                                        %%  iWhichInterp = 0;  %% orig code  "slow"
                                        %%  iWhichInterp = 1;  %% newer code "fast"
 
@@ -123,7 +123,7 @@ elseif narginx == 5
   end
 
   if ~isfield(run_sarta,'iWhichInterp')
-     run_sarta.iWhichInterp  = +1;  %% interp1(0) or interp1qr(1)
+     run_sarta.iWhichInterp  =  0;  %% interp1(0) or interp1qr(1)
                                     %%  iWhichInterp = 0;  %% orig code  "slow"
                                     %%  iWhichInterp = 1;  %% newer code "fast"
   end

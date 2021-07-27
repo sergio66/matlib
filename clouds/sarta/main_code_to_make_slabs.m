@@ -110,7 +110,10 @@ if run_sarta.cumsum == -1
   %% find cumulative OD, basically same as reset_cprtop_cloudOD
   profXYZ = prof;
   %plotclouds(prof,5,6,'init')
-  prof = compute_cloudOD(prof,airslevels,airslayers,airsheights,run_sarta.iNew_or_Orig_CXWC2OD);
+  iComputeCloudOD = -1;   %% really, computing level cloudOD is a waste of time, not used
+  if iComputeCloudOD > 0
+    prof = compute_cloudOD(prof,airslevels,airslayers,airsheights,run_sarta.iNew_or_Orig_CXWC2OD,iComputeCloudOD);
+  end
   %plotclouds(prof,7,8,'cumsum = -1')  
 else
   %% ecmwfcld2sartacld.m -- > new_style_smooth_cc_ciwc_clwc_to_water_ice_profile --> cloud_mean_press 

@@ -11,7 +11,8 @@ for ii=1:100
   end
 %plot(h,pavg)
 
-ht=interp1qr(pavg,h,pin);
+ht=interp1(pavg,h,pin);
+%ht=interp1qr(pavg,h,pin);
 
 if ((isnan(ht)) | ht > 7.05e4)
   ht = 8.09e4;

@@ -23,7 +23,6 @@ function [head, prof]=subset_rtp_allcloudfields(headin, profin, glist, clist, pl
 % Copied from /asl/matlab/rtptools/subset_rtp.m
 % with ciwc, clwc, cc added in
 
-
 % Created: 13 September 2001, Scott Hannon
 % Last update: 1 February 2002, Scott Hannon - add new rtpV103 vars
 % Update: 25 June 2002, Scott Hannon - add new rtpV105 vars
@@ -142,7 +141,6 @@ else
    nprof=nprofin;
 end
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create output "head" structure
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,7 +201,6 @@ end
 if (isfield(headin,'itype'))
    head.itype=headin.itype;
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create output "prof" structure
@@ -534,7 +531,7 @@ if length(fieldsIN) ~= length(fieldsOUT)
         eval(str)
       elseif mm > 101
         %% this is like eg p.robs1 = L x N ---> L x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];         
+        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];
         eval(str)
       end
     end

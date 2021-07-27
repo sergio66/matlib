@@ -1,5 +1,12 @@
 function prof = prof_add_co2(h,prof0,run_sarta);
 
+%% choices : prof0 already has gas_2 so this is irrelevant OR
+%%           prof0 does not have gas_2 so need to set prof0.co2ppm
+%%             run_sarta.co2ppm == -1 : set co2ppm depending on rtime ((years/month/date)-2002)  * 2.2
+%%             run_sarta.co2ppm ==  0 : set co2ppm to constant 385;
+%%             run_sarta.co2ppm == +1 : set co2ppm to mean(run_sarta.co2ppm)*ones(size(prof0.stemp)) if length(run_sarta.co2ppm) < length(prof0.stemp)
+%%             run_sarta.co2ppm == +1 : set co2ppm to run_sarta.co2ppm                               if length(run_sarta.co2ppm) = length(prof0.stemp)
+
 prof = prof0;
 
 if ~isfield(prof,'co2ppm')

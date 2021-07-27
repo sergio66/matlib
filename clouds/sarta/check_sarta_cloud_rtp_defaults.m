@@ -90,9 +90,32 @@ elseif narginx == 5
      run_sarta.tcc  = +1;  %% if this field exists in input structure p, then set p.cfrac = p.tcc as this is GOOOD
   end
 
-  if ~isfield(run_sarta,'co2ppm')
-    run_sarta.co2ppm = 385;
+  %% see prof_add_co2.m in this dir
+  %% choices : prof0 already has gas_2 so this is irrelevant OR
+  %%           prof0 does not have gas_2 so need to set prof0.co2ppm
+  %%             run_sarta.co2ppm == -1 : set co2ppm depending on rtime ((years/month/date)-2002)  * 2.2
+  %%             run_sarta.co2ppm ==  0 : set co2ppm to constant 385;
+  %%             run_sarta.co2ppm == +1 : set co2ppm to mean(run_sarta.co2ppm)*ones(size(prof0.stemp)) if length(run_sarta.co2ppm) < length(prof0.stemp)
+  %%             run_sarta.co2ppm == +1 : set co2ppm to run_sarta.co2ppm                               if length(run_sarta.co2ppm) = length(prof0.stemp)
+  if isfield(run_sarta,'co2ppm')
+    fprintf(1,'run_sarta contains field co2ppm : length(p0.stemp) = %6i length(run_sarta.co2ppm) = %6i \n',length(p0.stemp),length(run_sarta.co2ppm))
+  elseif ~isfield(run_sarta,'co2ppm')
+    if ~isfield(p0,'co2ppm')
+      disp('run_sarta does not contain co2ppm, and input prof structure does not contain co2ppm ... set run_sarta.co2ppm = 385');
+      run_sarta.co2ppm = 385;
+    elseif isfield(p0,'co2ppm')
+      if length(p0.co2ppm) == length(p0.stemp)
+        disp('run_sarta does not contain co2ppm, but input prof structure does contain co2ppm ... set run_sarta.co2ppm = prof0.co2ppm');
+        run_sarta.co2ppm = p0.co2ppm;
+      elseif length(p0.co2ppm) < length(p0.stemp)
+        error('run_sarta does not contain co2ppm, but input prof structure does contain a few values of co2ppm ... set run_sarta.co2ppm = [prof0.co2ppm  mean(prof0.co2ppm)*remaining]');
+        junk = length(p0.stemp) - length(p0.co2ppm);
+        junk = mean(p0.co2ppm) * ones(1,junk);
+        run_sarta.co2ppm = [p0.co2ppm junk];
+      end
+    end
   end
+
   if ~isfield(run_sarta,'randomCpsize')
     run_sarta.randomCpsize = +1;
   end

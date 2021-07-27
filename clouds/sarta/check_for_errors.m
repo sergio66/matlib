@@ -1,5 +1,9 @@
 function [prof,iNotOK,ibadlist] = check_for_errors(pin,cfracSet,iFixLoop,talk)
 
+if nargin == 3
+  talk = -1;
+end
+
 iNotOK = 0;
 prof = pin;
 ibadlist = [];

@@ -1,11 +1,32 @@
-function prof = get_sarta_clear(h,ha,prof0,pa,run_sarta)
+function profOUT = get_sarta_clear(h,ha,prof0,pa,run_sarta)
 
 tic
 
 %% these are required but user needs to add them before using this code
 %% addpath /asl/matlib/aslutil/
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+profOUT = prof0;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
 prof = prof0;
+  disp('explicitly setting cloud fields in working copy of prof to 0 and -9999')
+  prof.cngwat = ones(size(prof.stemp)) * 0;
+  prof.cfrac  = ones(size(prof.stemp)) * 0;
+  prof.cpsize = ones(size(prof.stemp)) * -9999;
+  prof.cprtop = ones(size(prof.stemp)) * -9999;
+  prof.cprbot = ones(size(prof.stemp)) * -9999;
+  prof.ctype  = ones(size(prof.stemp)) * -9999;
+
+  prof.cngwat2 = ones(size(prof.stemp)) * 0;
+  prof.cfrac2  = ones(size(prof.stemp)) * 0;
+  prof.cpsize2 = ones(size(prof.stemp)) * -9999;
+  prof.cprtop2 = ones(size(prof.stemp)) * -9999;
+  prof.cprbot2 = ones(size(prof.stemp)) * -9999;
+  prof.ctype2  = ones(size(prof.stemp)) * -9999;
+
+  prof.cfrac12  = ones(size(prof.stemp)) * 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp(' ')
 fprintf(1,'  doing clear sky SARTA calcs ....\n')
@@ -52,4 +73,5 @@ end
 rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh]; eval(rmer);
 
 toc
-prof.sarta_rclearcalc = profRX2.rcalc;
+
+profOUT.sarta_rclearcalc = profRX2.rcalc;

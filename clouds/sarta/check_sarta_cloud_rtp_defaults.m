@@ -98,11 +98,15 @@ elseif narginx == 5
   %%             run_sarta.co2ppm == +1 : set co2ppm to mean(run_sarta.co2ppm)*ones(size(prof0.stemp)) if length(run_sarta.co2ppm) < length(prof0.stemp)
   %%             run_sarta.co2ppm == +1 : set co2ppm to run_sarta.co2ppm                               if length(run_sarta.co2ppm) = length(prof0.stemp)
   if isfield(run_sarta,'co2ppm')
-    fprintf(1,'run_sarta contains field co2ppm : length(p0.stemp) = %6i length(run_sarta.co2ppm) = %6i \n',length(p0.stemp),length(run_sarta.co2ppm))
+    junk = [length(p0.stemp) length(run_sarta.co2ppm) mean(run_sarta.co2ppm) std(run_sarta.co2ppm)];
+    fprintf(1,'run_sarta contains field co2ppm : length(p0.stemp) = %6i length(run_sarta.co2ppm) = %6i; mean(co2ppm) = %8.4f +/- %8.4f ppm \n',junk);
+    if length(p0.stemp) > length(run_sarta.co2ppm)
+      disp('warning : length(p0.stemp) > length(run_sarta.co2ppm) so prof_add_co2.m will use the mean(p0.co2ppm)')
+    end
   elseif ~isfield(run_sarta,'co2ppm')
     if ~isfield(p0,'co2ppm')
       disp('run_sarta does not contain co2ppm, and input prof structure does not contain co2ppm ... set run_sarta.co2ppm = 385');
-      run_sarta.co2ppm = 385;
+      run_sarta.co2ppm = 385 * ones(size(p0.stemp));
     elseif isfield(p0,'co2ppm')
       if length(p0.co2ppm) == length(p0.stemp)
         disp('run_sarta does not contain co2ppm, but input prof structure does contain co2ppm ... set run_sarta.co2ppm = prof0.co2ppm');
@@ -113,6 +117,8 @@ elseif narginx == 5
         junk = mean(p0.co2ppm) * ones(1,junk);
         run_sarta.co2ppm = [p0.co2ppm junk];
       end
+    junk = [length(p0.stemp) length(run_sarta.co2ppm) mean(run_sarta.co2ppm) std(run_sarta.co2ppm)];
+    fprintf(1,'run_sarta now contains field co2ppm : length(p0.stemp) = %6i length(run_sarta.co2ppm) = %6i; mean(co2ppm) = %8.4f +/- %8.4f ppm \n',junk);
     end
   end
 

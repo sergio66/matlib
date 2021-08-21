@@ -186,6 +186,7 @@ narginx = nargin;
 if nargin == 4
   run_sarta = struct;
 end  
+
 [p,run_sarta,otherstuff] = check_sarta_cloud_rtp_defaults(run_sarta,h,p,narginx);
 cmin = otherstuff.cmin;             %% min allowed cfrac
 cngwat_max = otherstuff.cngwat_max; %% max allowed cngwat

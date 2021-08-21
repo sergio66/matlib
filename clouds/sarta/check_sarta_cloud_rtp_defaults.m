@@ -26,6 +26,21 @@ global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_c
 run_sarta = run_sarta0;
 p = p0;
 
+allowedparams = [{'ice_water_separator'},{'randomCpsize'},{'co2ppm'},{'ForceNewSlabs'},{'tcc'},{'waterORice'},{'iNew_or_Orig_CXWC2OD'},...
+                 {'Slab_or_100layer'},{'talk'},{'iWhichInterp'},...
+                 {'klayers_code'},{'sartaclear_code'},{'sartacloud_code'},{'clear'},{'cloud'},{'cumsum'},{'cfrac'},{'overlap'}];
+if narginx == 5
+  optvar = fieldnames(run_sarta);
+  for junk = 1 : length(optvar)
+    if (length(intersect(allowedparams,optvar{junk})) == 1)
+      eval(sprintf('settings.%s = run_sarta.%s;', optvar{junk}, optvar{junk}));
+    else
+      fprintf(1,'run_sarta param not in allowed list ... %s \n',optvar{junk});
+      error('quitting ');
+   end
+ end
+end
+
 if narginx == 4
   %% default to running sarta_cloudy
   run_sarta.clear   = -1;  %% do not run clear code
@@ -177,6 +192,12 @@ elseif narginx == 5
     if ~isfield(run_sarta,'sartacloud_code')
       %% see /home/sergio/SARTA_CLOUDY/v108_Src_rtpV201_pclsam_slabcloud_hg3_100layerNEW
       run_sarta.sartacloud_code = ...
+       '/home/sergio/SARTA_CLOUDY/BinV201/sarta_apr08_m140x_iceGHMbaum_waterdrop_desertdust_slabcloud_hg3_100layerNEW';
+    end
+
+    if ~isfield(run_sarta,'sartaclear_code')
+      %% see /home/sergio/SARTA_CLOUDY/v108_Src_rtpV201_pclsam_slabcloud_hg3_100layerNEW
+      run_sarta.sartaclear_code = ...
        '/home/sergio/SARTA_CLOUDY/BinV201/sarta_apr08_m140x_iceGHMbaum_waterdrop_desertdust_slabcloud_hg3_100layerNEW';
     end
     

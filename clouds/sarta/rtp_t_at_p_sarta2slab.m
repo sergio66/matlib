@@ -28,6 +28,11 @@ function [t] = rtp_t_at_p_sarta2slab(p, head, prof, lextrap);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+if length(iWhichInterp) == 0
+  disp('WARNING : in rtp_t_at_p_sarta2slab.m cannot find global iWhichInterp, set to 1')
+  disp('WARNING : eg when called by /home/sergio/MATLABCODE/CRODGERS_FAST_CLOUD/driver_stage5AB_setclouds');
+  iWhichInterp = 1;
+end
 
 if (nargin < 3)
    disp('Error in rtp_t_at_p_sarta2slab: insufficient arguments')
@@ -115,7 +120,7 @@ nok = length(iok);
 
 % Loop over profiles for processing
 if (nok > 0)
-   if iWhichInterp == 0
+   if iWhichInterp == 0 | length(iWhichInterp) == 0
      for ii = 1:nok
         ip = iok(ii);
         lnp = log(px(ip));

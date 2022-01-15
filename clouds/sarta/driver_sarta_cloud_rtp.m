@@ -165,6 +165,22 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
   rtpwrite('/asl/data/rtprod_airs/2012/05/01/pcrtm_cld_ecm_41ch.airs_ctr.2012.05.01.10_sarta.rtp',h,ha,p1,pa);
 %}
 
+%{
+% testing the code to see if you get back similar clouds
+  [h,ha,p,pa] = rtpread('/asl/s1/sergio/rtp/j1_ccast_hires/allfov/2019/04/25/cloudy_airs_l1c_ecm_sarta_baum_ice.2019.04.25.213.rtp');
+  run_sarta.clear = -1;
+  run_sarta.cloud = -1;
+  run_sarta.ForceNewSlabs = +1; 
+  run_sarta.randomCpsize =  1;
+  run_sarta.cumsum = +1;    %% george 
+  run_sarta.cumsum = +9999; %% strow   
+  figure(1); scatter(p.cprtop,p.cpsize,10,p.ctype,'filled'); xlim([0 1000]); colorbar; colormap jet
+  tic
+  p1 = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta);
+  toc
+  figure(2); scatter(p1.cprtop,p1.cpsize,10,p1.ctype,'filled'); xlim([0 1000]); colorbar; colormap jet
+%}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
 

@@ -24,6 +24,8 @@ function [cpsize] = fake_cpsize(temp, iceflag, randomCpsize);
 % Created: 05 Mar 2009, Scott Hannon
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%plot(temp); title('Tslab'); disp('ret to continue'); pause
+
 % Ice size vs temp lookup table
 icesize = [ 30,  90, 170];
 icetemp = [213, 238, 263];
@@ -60,6 +62,7 @@ if (nargin > 3)
 end
 if (nargin == 2)
    randomCpsize = 0;
+   randomCpsize = 1;
 end
 d = size(temp);
 if (length(d) ~= 2 | min(d) ~= 1)

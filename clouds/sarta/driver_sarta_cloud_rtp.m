@@ -50,8 +50,9 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %                                         if redoing slabs, this is THE most important variable!!!!
 %     run_sarta.clear               = +/-1 for yes/no, results into prof.clearcalc (DEFAULT -1)
 %     run_sarta.cloud               = +/-1 for yes/no, results into prof.rcalc     (DEFAULT +1)
-%     run_sarta.cumsum = -1           : ORIG DEFAULT go with "ecmwf2sarta" results (default before March 2012), mean/centroid "C"  of ciwc/clwc "GeorgeAumann pick"
-%                        0 -- 1        : set cloud pressure based on cumulative sum of p.ciwc and p.clwc, 
+%     run_sarta.cumsum = -1         = ORIG DEFAULT go with "ecmwf2sarta" results (default before March 2012), mean/centroid "C"  of ciwc/clwc "GeorgeAumann pick"
+%                        +(0 -- 1)     : user set cloud pressure based on cumulative sum of p.ciwc and p.clwc, 
+%                        -(0 -- 1)     : randomly set cloud pressure based on cumulative sum of p.ciwc and p.clwc, 
 %                        >  1--9998    : go for where cumsum(cloudOD) ~ N/100 (if that can be found)
 %                        >= +9999      : NEW DEFAULT go for peak "P" of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC) "Strow pick"
 %                        <= -9999      :             go for peak "P" of wgt fcn of cloud ice, cloud liquid (ie go HIGH in atm, good for DCC)

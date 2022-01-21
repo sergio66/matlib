@@ -46,8 +46,8 @@ if narginx == 4
   run_sarta.clear   = -1;  %% do not run clear code
   run_sarta.cloud   = +1;  %% run cloudy code
 
-  run_sarta.cumsum  = -1;    %% use pre-2012 cloudtop heights, without adjustments
-  run_sarta.cumsum  = 9999;  %% use this in later runs eg
+  run_sarta.cumsum  = -1;    %% use pre-2012 cloudtop heights, without adjustments, Aumann pick (centroid)
+  run_sarta.cumsum  = 9999;  %% use this in later runs eg                           Strow pick (highest)
                              %% ~/MATLABCODE/RTPMAKE/CLUST_RTPMAKE/CLUSTMAKE_ERA_CLOUD_NADIR/clustbatch_make_eracloudrtp_nadir_sarta_filelist.m
 
   run_sarta.cfrac               = -1;  %% use random cfracs (instead of fixed fractions set by run_sarta.cfrac > 0)
@@ -150,9 +150,9 @@ elseif narginx == 5
     run_sarta.cloud = +1;
   end
   if ~isfield(run_sarta,'cumsum')
-    run_sarta.cumsum = -1;    %% use pre-2012 cloudtop heights, without adjustments
-    run_sarta.cumsum = 9999;  %% use this in later runs eg
-                            %% ~/MATLABCODE/RTPMAKE/CLUST_RTPMAKE/CLUSTMAKE_ERA_CLOUD_NADIR/clustbatch_make_eracloudrtp_nadir_sarta_filelist.m
+    run_sarta.cumsum = -1;    %% use pre-2012 cloudtop heights, without adjustments AUmann pick (centroid)
+    run_sarta.cumsum = 9999;  %% use this in later runs eg                          Strow pick (highest)
+                              %% ~/MATLABCODE/RTPMAKE/CLUST_RTPMAKE/CLUSTMAKE_ERA_CLOUD_NADIR/clustbatch_make_eracloudrtp_nadir_sarta_filelist.m
   end
   if ~isfield(run_sarta,'cfrac')
     run_sarta.cfrac = -1;  %% use random cfracs (instead of fixed fractions set by run_sarta.cfrac > 0)  

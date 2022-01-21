@@ -1,7 +1,7 @@
 function aa = cloud_mean_press(aaIN,xcumsum,icecld,watercld,plevs,ii)
 
 %% input
-%%   xcumsum = run_sarta.cumsum so can be -9999,-1,0-1,1-9998,9999
+%%   xcumsum = run_sarta.cumsum so can be -9999,-1,-(0-1),+(0-1),1-9998,9999
 %% output
 %%   aa.icecldX,aa.watercldX = mean(CIWC), mean(CLWC) pressure level
 %%   aa.icecldY,aa.watercldY = pressure level where normalized CIWC/CLWC exceed xcumsum if 0 < xcumsum < 1
@@ -46,6 +46,10 @@ aa.icecldX(ii)   = nansum((plevs.*(icecldXW.^0)).*icecldX);
 aa.watercldX(ii) = nansum((plevs.*(watercldXW.^0)).*watercldX);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if xcumsum <= 0 & xcumsum > -1
+  xcumsum = rand(size(xcumsum));
+end
 
 %% this is where we already have xcumsum of column total
 %% xcumsum == run_sarta.cumsum

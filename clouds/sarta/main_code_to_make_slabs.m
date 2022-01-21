@@ -118,9 +118,15 @@ if run_sarta.cumsum == -1
 else
   %% ecmwfcld2sartacld.m -- > new_style_smooth_cc_ciwc_clwc_to_water_ice_profile --> cloud_mean_press 
   %% sets prof.watercldX,prof.watercldY, prof.icecldX, prof.icecldY which are used in reset_cprtop
-  if run_sarta.cumsum > 0 & run_sarta.cumsum <= 1
+  if run_sarta.cumsum >= 0 & run_sarta.cumsum <= 1
     %% set cloud top according to cumulative sum fraction of ciwc or clwc
     %% if 0 <= run_sarta.cumsum < 1 this cumulative frac was set in ecmwfcld2sartacld.m -->
+    %% new_style_smooth_cc_ciwc_clwc_to_water_ice_profile --> cloud_mean_press --> set icecldY,watercldY
+    profXYZ = prof;
+    prof = reset_cprtop(prof);
+  elseif run_sarta.cumsum < 0 & run_sarta.cumsum >= -1
+    %% set cloud top according to RANDOM cumulative sum fraction of ciwc or clwc
+    %% if 0 >= run_sarta.cumsum >= -1 this cumulative frac was set in ecmwfcld2sartacld.m -->
     %% new_style_smooth_cc_ciwc_clwc_to_water_ice_profile --> cloud_mean_press --> set icecldY,watercldY
     profXYZ = prof;
     prof = reset_cprtop(prof);

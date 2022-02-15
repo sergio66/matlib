@@ -51,6 +51,9 @@ iDoPlot = -1;   %% do not plot stuff
 iPrint = +1;    %% do     print chirpy talky comments
 iPrint = -1;    %% do not print chirpy talky comments
 
+%iDoPlot = +1
+%iPrint = +1
+
 iMakeIceWaterCld = -1; %% old style for taking eg cc/ciwc/clwc and smoothing
 iMakeIceWaterCld = +1; %% new style for taking eg cc/ciwc/clwc and smoothing
 

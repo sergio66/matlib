@@ -41,4 +41,25 @@ hl = legend('Ice','SmoothIce','NewIce','Water','SmoothWater','NewWater',...
      'Location','NorthEast');
 set(hl,'fontsize',8);
 title('BOTH')     
+
+figure(4); clf
+plot(profX.ptemp(:,ii),profX.plevs(:,ii)); title('T(z)');
+set(gca,'ydir','Reverse'); 
+xlim([180 320])
+grid
+
+for ijunki = 1 : 4
+  figure(ijunki); ylim([min(profX.plevs(:,ijunki)) profX.spres(ijunki) + 10]);
+end
+
+figure(1); set(gca,'xscale','log')
+figure(2); set(gca,'xscale','log')
+figure(3); set(gca,'xscale','log')
+figure(4); set(gca,'xscale','log')
+figure(1); set(gca,'yscale','log')
+figure(2); set(gca,'yscale','log')
+figure(3); set(gca,'yscale','log')
+figure(4); set(gca,'yscale','log')
+
 pause(0.1);
+

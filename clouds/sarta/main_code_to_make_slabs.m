@@ -55,9 +55,9 @@ if h.ptype ~= 0
   error('need levels input!')
 end
 
-%if nlev_std > 1e-3
-%  error('oops : code assumes ERA (37 levs) or ECMWF (91 levs) or other constant numlevs model')
-%end
+if nlev_std > 1e-3
+  error('oops : code assumes ERA (37 levs) or ECMWF (91 levs) or other constant numlevs model')
+end
 
 load airsheights.dat
 load airslevels.dat

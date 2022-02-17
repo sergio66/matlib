@@ -41,6 +41,10 @@ end
 
 if run_sarta.cloud > 0 
   disp('running SARTA cloud')
+  %[prof.ctype  prof.cngwat  prof.cpsize  prof.cprtop  prof.cprbot]
+  %[prof.ctype2 prof.cngwat2 prof.cpsize2 prof.cprtop2 prof.cprbot2]
+  %figure(1); plot(prof.ciwc,prof.plevs);  ax = axis; line([ax(1) ax(2)],[prof.cprtop prof.cprtop],'color','k');   line([ax(1) ax(2)],[prof.cprbot prof.cprbot],'color','k');
+  %figure(2); plot(prof.clwc,prof.plevs);  ax = axis; line([ax(1) ax(2)],[prof.cprtop2 prof.cprtop2],'color','k'); line([ax(1) ax(2)],[prof.cprbot2 prof.cprbot2],'color','k');
   prof = get_sarta_cloud(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA cloudy to be run; not changing prof.rcalc')

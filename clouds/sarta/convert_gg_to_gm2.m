@@ -1,4 +1,4 @@
-function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ecmwf,plevs,tlevs,airslevels,airslayers,airsheights) 
+function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ecmwf,plevs,tlevs,spres,airslevels,airslayers,airsheights) 
 
 %% this is the conversion from ERA/ECM total profile g/g to SARTA slab g/m2
 %%
@@ -7,7 +7,8 @@ function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ec
 %% input
 %%        cT,cB              = level number for cloud tops, cloud bottoms
 %%        ciwc_clwc_gg_ecmwf = cumulative (total) cloud amt in ECMWF units (g/g)
-%%        plevs,tlevs        = pressure levels and level temps from ECMWF
+%%        plevs,tlevs        = (could be augmented high res) pressure levels and level temps from ECMWF
+%%        spres              = surface pressure from ECMWF
 %% output
 %%        cngwat_g_per_m2_sarta = cumulative (total) cloud amt in SARTA units (g/m2)
 %%
@@ -73,6 +74,17 @@ function [cngwat_g_per_m2_sarta cT cB] = convert_gg_to_gm2(cT,cB,ciwc_clwc_gg_ec
 % load airslevels.dat
 
 global iWhichInterp  %% 0 = matlab interp1, 1 = interp1qr, set in driver_sarta_cloud_rtp.m
+
+%% have to sanity check plevs, tlevs, spres
+bad = find(plevs <= spres+100 & tlevs < 150);
+good = find(plevs <= spres & tlevs > 150);
+if length(bad) > 0
+  tlevs0 = tlevs;
+  disp('warning .. find -ve temps in the input temperature profile, temporily extrapolating them outta existence')
+  tlevs(bad) = interp1(log(plevs(good)),tlevs(good),log(plevs(bad)),[],'extrap');
+  %semilogy(tlevs0,plevs,'x-',tlevs,plevs,'o-'); set(gca,'ydir','reverse'); ax = axis; line([ax(1) ax(2)],[spres spres],'color','k');
+  %xlim([180 320])
+end
 
 Loschmidt = 2.6867775E+19; % molecules per cm^3 (at 1 atm and 273.15 K)
 kAvogadro = 6.022142E+26;  % molecules per kilomole
@@ -146,7 +158,7 @@ for ii = 1 : length(cT)
       %%kilomoles -> moles, cm2 -> m2
       g_m2new(jjind) = num_kmoles_percm2 * 1000 * MASSF * 10000;  
     end
-    sum_g_m2new = sum(g_m2new);  
+    sum_g_m2new = sum(g_m2new(g_m2new >= 0));  
   end
 
   pB = plevs(cB(ii));
@@ -185,3 +197,4 @@ for ii = 1 : length(cT)
   %[mr g_m2 g_m2new sum_g_m2new]
   %format 
 end
+

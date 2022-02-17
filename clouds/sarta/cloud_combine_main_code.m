@@ -23,6 +23,7 @@ end
 
 [cT,cB,cOUT,cngwat,cTYPE,iFound] = combine_clouds(...
             iN,iOUT,iT,iB,iPeak,wN,wOUT,wT,wB,wPeak,plevs,profX.plevs(:,ii),airslevels,airslayers,airsheights);
+
 iTT = iT; if length(iTT) == 0; iTT = -1; end
 iBB = iB; if length(iBB) == 0; iBB = -1; end
 wTT = wT; if length(wTT) == 0; wTT = -1; end
@@ -38,7 +39,7 @@ if p440 < 1013
         cT(kk) = cut440 - 10;
         cT(kk) = cut440 - 1;	
         if iPrint > 0
-          fprintf(1,'warning had to reset ICE cloudtop, to make it less than %8.3 mb \n',p440)
+          fprintf(1,'warning had to reset ICE cloudtop, to make it less than %8.3f mb \n',p440)
         end
       elseif cTYPE(kk) == 'W' & plevs(cT(kk)) < p440
         cT(kk) = cut440 + 1;
@@ -47,7 +48,7 @@ if p440 < 1013
           cB(kk) = cT(kk) + 3;
         end
         if iPrint > 0
-          fprintf(1,'warning had to reset WATER cloudtop, to make it more than %8.3 mb \n',p440)      
+          fprintf(1,'warning had to reset WATER cloudtop, to make it more than %8.3f mb \n',p440)      
         end
       end
     end

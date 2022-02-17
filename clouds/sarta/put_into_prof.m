@@ -67,7 +67,7 @@ if length(cTYPE) == 1
 
   icefound   = -1;
   waterfound = -1;
-  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airslayers,airsheights);
+  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,pin.spres(jj),airslevels,airslayers,airsheights);
 
   kk = 1;
 
@@ -109,17 +109,18 @@ if length(cTYPE) == 2
 
   icefound   = -1;
   waterfound = -1;
-  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,airslevels,airslayers,airsheights);
 
-if length(find(isnan(cc))) > 0
-  disp('length(find(isnan(cc))) > 0 in put_into_prof')
-  keyboard
-end
+  [cc cT cB] = convert_gg_to_gm2(cT,cB,cngwat,plevs,ptemp,pin.spres(jj),airslevels,airslayers,airsheights);
 
-if length(find(isinf(cc))) > 0
-  disp('length(find(isinf(cc))) > 0 in put_into_prof')
-  keyboard
-end
+  if length(find(isnan(cc))) > 0
+    disp('length(find(isnan(cc))) > 0 in put_into_prof')
+    keyboard
+  end
+  
+  if length(find(isinf(cc))) > 0
+    disp('length(find(isinf(cc))) > 0 in put_into_prof')
+    keyboard
+  end
 
   kk = 1;
   prof.cngwat(jj)  = cc(kk);

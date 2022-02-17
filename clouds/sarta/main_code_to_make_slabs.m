@@ -84,7 +84,7 @@ else
                     %% this then puts the info into "prof" by calling put_into_prof w/in routine
 end
 
-prof = put_into_V201cld_fields(prof);    %% puts cloud info from above into rtpv201 fields 
+prof = put_into_V201cld_fields(prof);    %% puts cloud2 info from above into rtpv201 fields 
   prof.ctype  = double(prof.ctype);
   prof.ctype2 = double(prof.ctype2);
 if iDebugMain > 0
@@ -192,3 +192,4 @@ if run_sarta.cfrac >= 0 & run_sarta.cfrac <= 1
   oo = find(prof.cfrac2 > 0 & prof.cngwat2 > 0); prof.cfrac2(oo) = run_sarta.cfrac;
   oo = find(prof.cfrac  > 0 & prof.cfrac2 > 0);  prof.cfrac12(oo)  = run_sarta.cfrac;
 end
+

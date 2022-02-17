@@ -51,9 +51,6 @@ iDoPlot = -1;   %% do not plot stuff
 iPrint = +1;    %% do     print chirpy talky comments
 iPrint = -1;    %% do not print chirpy talky comments
 
-%iDoPlot = +1
-%iPrint = +1
-
 iMakeIceWaterCld = -1; %% old style for taking eg cc/ciwc/clwc and smoothing
 iMakeIceWaterCld = +1; %% new style for taking eg cc/ciwc/clwc and smoothing
 
@@ -82,33 +79,33 @@ for iiiiA = 1:length(iiii)
   if iPrint > 0
     poink = [ii wN iN wPeak iPeak];
     %fprintf(1,'%5i %3i %3i | %8.6e %8.6e %8.6e | %8.6e %8.6e %8.6e \n',poink);
-    fprintf(1,'%5i %3i %3i | %8.6e \n',poink);
+    fprintf(1,'%5i %3i %3i | %8.6e %8.6e \n',poink);
   elseif iPrint < 0 & mod(jj,1000) == 0
     tnow = toc;
     fprintf(1,' processed %5i of %5i in %8.6f minutes\n',iiiiA,length(iiii),tnow/60);
   end
 
-%plot(profX.ciwc(:,ii),profX.plevs(:,ii),'bx-',profX.clwc(:,ii),profX.plevs(:,ii),'ro-',watercld,plevs,'g')
-%[plevs(iT) plevs(iB)]
-%[plevs(wT) plevs(wB)]
-%[iN wN]
-%cut440
-
+  %plot(profX.ciwc(:,ii),profX.plevs(:,ii),'bx-',profX.clwc(:,ii),profX.plevs(:,ii),'ro-',watercld,plevs,'g')
+  %[plevs(iT) plevs(iB)]
+  %[plevs(wT) plevs(wB)]
+  %[iN wN]
+  %cut440
+  
   cloud_combine_main_code
   prof = put_into_prof(prof,profX,ii,jj,plevs,ptemp,iLevsVers,...
                        cT,cB,cOUT,cngwat,cTYPE,iFound,airslevels,airslayers,airsheights);
 		       
-%{
-if ii == 21
-  plot(profX.ciwc(:,ii),profX.plevs(:,ii),'rx-',profX.clwc(:,ii),profX.plevs(:,ii),'bo-',watercld,plevs,'g')
-  [plevs(wT) plevs(wB)]
-  cut440
-  figure(1); clf; print_ecmwfcld2sartacld
-  figure(2); clf; plot_ecmwfcld2sartacld
-  disp('ii = 21 in ecmwfcld2sartacld.m')
-  keyboard_nowindow
-end
-%}
+  %{
+  if ii == 21
+    plot(profX.ciwc(:,ii),profX.plevs(:,ii),'rx-',profX.clwc(:,ii),profX.plevs(:,ii),'bo-',watercld,plevs,'g')
+    [plevs(wT) plevs(wB)]
+    cut440
+    figure(1); clf; print_ecmwfcld2sartacld
+    figure(2); clf; plot_ecmwfcld2sartacld
+    disp('ii = 21 in ecmwfcld2sartacld.m')
+    keyboard_nowindow
+  end
+  %}
 
   if iPrint > 0
     print_ecmwfcld2sartacld
@@ -130,5 +127,5 @@ prof.icecldY   = aa.icecldY;      %%   ice cloud mean pressure based on run_sart
 
 %  com.mathworks.services.Prefs.setBooleanPref('EditorGraphicalDebugging',false)
 %  disp('here key')
-%  keyboard
+%  keyboard_nowindow
 

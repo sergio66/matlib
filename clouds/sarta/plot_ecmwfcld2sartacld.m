@@ -49,7 +49,7 @@ xlim([180 320])
 grid
 
 for ijunki = 1 : 4
-  figure(ijunki); ylim([min(profX.plevs(:,ijunki)) profX.spres(ijunki) + 10]);
+  figure(ijunki); ylim([min(profX.plevs(:,ii)) profX.spres(ii) + 10]);
 end
 
 figure(1); set(gca,'xscale','log')

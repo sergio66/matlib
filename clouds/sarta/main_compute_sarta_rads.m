@@ -34,6 +34,7 @@ end
 
 if run_sarta.clear > 0 
   disp('running SARTA clear, saving into rclearcalc')
+  %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in main_compute_sarta_rads.m : min/max rlon  min.max rlat')
   prof = get_sarta_clear(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA clear to be run; not changing prof.sarta_rclearcalc')  

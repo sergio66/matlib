@@ -132,6 +132,7 @@ iDebugMain = otherstuff.iDebugMain; %% to debug or not???
 prof = main_code_to_make_slabs(h,ha,p,pa,run_sarta,iDebugMain,otherstuff);
 
 %% compute rads
+%printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in main_sarta_cloud_rtp.m : min/max rlon  min.max rlat')
 prof = main_compute_sarta_rads(h,ha,prof,pa,pINPUT,run_sarta);
 
 tnow = toc;

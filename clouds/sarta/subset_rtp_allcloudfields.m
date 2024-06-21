@@ -1,6 +1,8 @@
 function [head, prof]=subset_rtp_allcloudfields(headin, profin, glist, clist, plist, iQuiet);
 
+% Ultimately, <<< [hx,px] = subset_rtp_allcloudfields(h,p,[],h.ichan(index_chan_subset),[]); >>>
 % function [head, prof]=subset_rtp(headin, profin, glist, clist, plist);
+% Ultimately, <<< [hx,px] = subset_rtp_allcloudfields(h,p,[],h.ichan(index_chan_subset),[]); >>>
 %
 % Subsets an RTP head & prof structure.
 %
@@ -476,6 +478,10 @@ if (isfield(profin,'sarta_rclearcalc'))
 end
 %}
 
+%if (isfield(profin,'nedt'))
+%   prof.nedt=profin.nedt(indc,indp);
+%end
+
 % User Defined data
 if (isfield(profin,'pnote'))
    prof.pnote=profin.pnote(:,indp);
@@ -523,15 +529,19 @@ if length(fieldsIN) ~= length(fieldsOUT)
       [mm,nn] = size(blah);
       if mm == 1
         %% this is like eg p.stemp = 1 x N ---> 1 x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indp);'];         
+        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indp);'];
         eval(str)
       elseif mm <= 101
         %% this is like eg p.gas_1 = L x N ---> L x M
         str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];         
         eval(str)
-      elseif mm > 101
+      elseif mm == headin.nchan
         %% this is like eg p.robs1 = L x N ---> L x M
         str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];
+        eval(str)
+      elseif mm > 101 & mm < headin.nchan
+        %% this is like eg p.rcalc_OEMinitialization and p.airs_noiseT = L x N ---> L x M
+        str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];
         eval(str)
       end
     end
@@ -540,5 +550,17 @@ if length(fieldsIN) ~= length(fieldsOUT)
     end
   elseif length(fieldsIN) < length(fieldsOUT)
     error('WOW : more fieldnames in OUTPUT than in INPUT');
+  end
+end
+
+if isfield(profin,'nedt')
+  size1a = size(profin.nedt);
+  size1b = size(profin.robs1);
+  size2a = size(prof.nedt);
+  size2b = size(prof.robs1);
+  if size2a ~= size2b
+    fprintf(1,'size(nedt)  before %5ix%5i after %5ix%5i \n',size1a,size2a)
+    fprintf(1,'size(robs1) before %5ix%5i after %5ix%5i \n',size1b,size2b)
+    error('subset_rtp_allcloudfields.m nedt')
   end
 end

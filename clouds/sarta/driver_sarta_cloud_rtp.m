@@ -241,6 +241,35 @@ end
 
 pINPUT = p;
 
+if min(p.rlon) < -180
+  error('min(p.rlon) < -180');
+end
+if max(p.rlon) > +180
+  error('min(p.rlon) > +180');
+end
+if min(p.rlat) < -090
+  error('min(p.rlat) < -090');
+end
+if max(p.rlat) > +090
+  error('min(p.rlat) > +090');
+end
+
+if min(p.plon) < -180
+  error('min(p.plon) < -180');
+end
+if max(p.plon) > +180
+  error('min(p.plon) > +180');
+end
+if min(p.plat) < -090
+  error('min(p.plat) < -090');
+end
+if max(p.plat) > +090
+  error('min(p.plat) > +090');
+end
+
+printarrayx([min(p.rlon) max(p.rlon) min(p.rlat) max(p.rlat)],'in driver_sarta_cloud_rtp.m : min/max rlon  min.max rlat')
+printarrayx([min(p.plon) max(p.plon) min(p.plat) max(p.plat)],'in driver_sarta_cloud_rtp.m : min/max plon  min.max plat')
+
 if run_sarta.ForceNewSlabs > 0
   %% force the making of new slab clouds
   if iAlreadyExistSlabClds > 0

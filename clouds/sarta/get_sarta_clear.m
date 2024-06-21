@@ -48,6 +48,7 @@ frp = mktempS('temp.rp.rtp');
 ugh = mktempS('ugh');
 
 rtpwrite(fip,h,ha,prof,pa);
+%printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in get_sarta_clear.m : min/max rlon  min.max rlat')
 %'nanabooboo in /umbc/xfs2/strow/asl/s1/sergio/home/MATLABCODE/matlib/clouds/sarta/get_sarta_clear.m'
 klayerser = ['!' klayers ' fin=' fip ' fout=' fop ' >& ' ugh];
   eval(klayerser);

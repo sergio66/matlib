@@ -1,4 +1,4 @@
-function [prof] = main_compute_sarta_rads(h,ha,prof0,pa,pINPUT,run_sarta)
+function [prof,hlayers,players] = main_compute_sarta_rads(h,ha,prof0,pa,pINPUT,run_sarta)
 
 prof = prof0;
 
@@ -35,7 +35,7 @@ end
 if run_sarta.clear > 0 
   disp('running SARTA clear, saving into rclearcalc')
   %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in main_compute_sarta_rads.m : min/max rlon  min.max rlat')
-  prof = get_sarta_clear(h,ha,prof,pa,run_sarta);
+  [prof,hlayers,players] = get_sarta_clear(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA clear to be run; not changing prof.sarta_rclearcalc')  
 end
@@ -46,7 +46,7 @@ if run_sarta.cloud > 0
   %[prof.ctype2 prof.cngwat2 prof.cpsize2 prof.cprtop2 prof.cprbot2]
   %figure(1); plot(prof.ciwc,prof.plevs);  ax = axis; line([ax(1) ax(2)],[prof.cprtop prof.cprtop],'color','k');   line([ax(1) ax(2)],[prof.cprbot prof.cprbot],'color','k');
   %figure(2); plot(prof.clwc,prof.plevs);  ax = axis; line([ax(1) ax(2)],[prof.cprtop2 prof.cprtop2],'color','k'); line([ax(1) ax(2)],[prof.cprbot2 prof.cprbot2],'color','k');
-  prof = get_sarta_cloud(h,ha,prof,pa,run_sarta);
+  [prof,hlayers,players] = get_sarta_cloud(h,ha,prof,pa,run_sarta);
 else
   disp('you did not ask for SARTA cloudy to be run; not changing prof.rcalc')
 end

@@ -1,4 +1,4 @@
-function prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx)
+function [prof,hlayers,players] = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx)
 
 %% modelled on MATLABCODE/CLOUD_ECMWF_ERA/PACKAGE_CFRAC/readecmwf91_nearest_gasNcloud_slabprof.m
 %% also see /asl/rtp_prod/airs/rtp/create_rcalc_ecm_cld_allfov.m
@@ -133,7 +133,7 @@ prof = main_code_to_make_slabs(h,ha,p,pa,run_sarta,iDebugMain,otherstuff);
 
 %% compute rads
 %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in main_sarta_cloud_rtp.m : min/max rlon  min.max rlat')
-prof = main_compute_sarta_rads(h,ha,prof,pa,pINPUT,run_sarta);
+[prof,hlayers,players] = main_compute_sarta_rads(h,ha,prof,pa,pINPUT,run_sarta);
 
 tnow = toc;
 fprintf(1,'TOTAL : %8.6f minutes to process \n',tnow/60);

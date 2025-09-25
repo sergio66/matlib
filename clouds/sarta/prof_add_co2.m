@@ -38,7 +38,7 @@ if ~isfield(prof,'gas_2') & length(intersect(h.glist,2)) == 0
   fprintf(1,'adding in prof.co2ppm from run_sarta.co2ppm  = %6.2f \n',mean(run_sarta.co2ppm))
   prof.co2ppm = co2;
 else
-  disp('in driver_sarta_cloud_rtp.m we ALREADY have gas2 in h,p')
+  disp('in driver_sarta_cloud_rtp.m we ALREADY ALREADY ALREADY have gas2 in h,p')
   disp('will use this profile instead of prof.co2ppm')
   prof.co2ppm = -9999 * ones(size(prof.stemp));
 end

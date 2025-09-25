@@ -1,4 +1,4 @@
-function prof = get_sarta_cloud(h,ha,prof0,pa,run_sarta);
+function [prof,hlayers,players] = get_sarta_cloud(h,ha,prof0,pa,run_sarta);
 
 tic
 prof = prof0;
@@ -82,5 +82,8 @@ if iBad < 0
   rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh1 ' ' ugh2]; eval(rmer);
 end
 
+hlayers = headRX2;
+players = profRX2;
 toc
 prof.rcalc = profRX2.rcalc;
+

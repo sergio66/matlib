@@ -1,4 +1,4 @@
-function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
+function [prof,orig_slabs,hlayers,players] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 
 %% modelled on MATLABCODE/CLOUD_ECMWF_ERA/PACKAGE_CFRAC/readecmwf91_nearest_gasNcloud_slabprof.m
 %% also see /asl/rtp_prod/airs/rtp/create_rcalc_ecm_cld_allfov.m
@@ -83,9 +83,10 @@ function [prof,orig_slabs] = driver_sarta_cloud_rtp(h,ha,p,pa,run_sarta)
 %                                           (based on Tcld)
 %                                   = -1,   then water is MODIS dme, random ice (based on Tcld)
 %                                   = 9999, then water is MODIS dme, random ice (based on KNLiou Tcld)
-%     run_sarta.co2ppm              = -1 to use 370 + (yy-2002)*2.2) in pcrtm/sarta
-%                                   = +x to use user input value     in pcrtm/sarta 
-%                                   =  0 to use DEFAULT klayers = 385 (set in executable by Scott; equivalent to run_sarta.co2ppm = +385)
+%     run_sarta.co2ppm              = -1     to use 370 + (yy-2002)*2.2) in pcrtm/sarta
+%                                   = +x     to use user input value     in pcrtm/sarta
+%                                   =  +9999 to use input profile value (p.gas_2(plevs) is set eg from ~/MATLABCODE/add_in_marcomatricardi_83profile_co2.m)
+%                                   =  0     to use DEFAULT klayers = 385 (set in executable by Scott; equivalent to run_sarta.co2ppm = +385)
 %                   this is done to keep it consistent with PCRTM
 %                   however, also have to make sure this is only enabled if h.glist does NOT include gas_2
 %      run_sarta.ForceNewSlabs      = -1 (default) to keep any slab clouds that are input, as they are
@@ -286,14 +287,14 @@ if iAlreadyExistSlabClds < 0
     disp(' >>>>>>>>>>>>> adding in slab cloud fields <<<<<<<<<<<<<<<<<')
   end
   [orig_slabs,p] = get_orig_slabs_info(p,run_sarta);
-  prof = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx); 
+  [prof,hlayers,players] = main_sarta_cloud_rtp(h,ha,p,pa,run_sarta,otherstuff,narginx); 
 elseif iAlreadyExistSlabClds > 0
   %% slab cloud fields already exist, just run klayers and sarta
   if run_sarta.talk == +1
     disp(' >>>>>>>>>>>>> slab cloud fields already exist; simply running klayers and sarta <<<<<<<<<<<<<<<<<')
   end
   orig_slabs = [];
-  prof = main_compute_sarta_rads(h,ha,p,pa,pINPUT,run_sarta);
+  [prof,hlayers,players] = main_compute_sarta_rads(h,ha,p,pa,pINPUT,run_sarta);
 end
 
 tnow = toc;

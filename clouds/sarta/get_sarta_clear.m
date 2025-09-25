@@ -1,4 +1,4 @@
-function profOUT = get_sarta_clear(h,ha,prof0,pa,run_sarta)
+function [profOUT,hlayers,players] = get_sarta_clear(h,ha,prof0,pa,run_sarta)
 
 tic
 
@@ -75,5 +75,8 @@ end
 rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh]; eval(rmer);
 
 toc
+
+hlayers = headRX2;
+players = profRX2;
 
 profOUT.sarta_rclearcalc = profRX2.rcalc;

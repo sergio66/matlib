@@ -1,0 +1,90 @@
+AIRS, CrIS, and IASI follow a fairly common foundation. IASI is still
+a bit different as I have not refactored Chris' original code to fully
+match the AIRS/CrIS paradigm (which itself isn't as fully one paradigm
+as I'd like). Where they are similar is in the use of a driver file to
+specify the paths to either granule files directly (for allfov) or to
+a day of granules for clear/random/site/dcc. So, the general flow for
+rtps is to build the required driver file and then kick off jobs on
+the cluster. Each individual cluster job can then pull in the
+appropriate path to get started. AIRS and CrIS have additionally moved
+on to having configuration files in which runtime options are
+specified. So, things like klayers/sarta executable paths are
+specified here, co2ppm overrides are specified here, etc. I keep these
+ini and driver files in a separate git repo (~/git/rtp_config) to help
+with traceability. Between commits and annotated tags, what was run
+and when is tracked. These could be tracked within rtp_prod2, I just
+found it cleaner for parsing the git histories to separate them out.
+
+I have also taken to keeping two working copies of the rtp_prod2 repo
+active. One is my /production/ repo and I try to run all production
+from it. the other is named rtp_prod2_DEV and is where I try to do all
+development. Trying to do development and production out of a single
+repo with rollback checkouts, branches, etc. just got unwieldy. I try
+to not use branches in the development repo but only because branch
+changes are not always as clean as one might hope. If I ever roll back
+the production repo, I always do it through a branch and then reset
+hard when reverting back to HEAD. My usual workflow is develop and
+test in rtp_prod2_DEV -> add/commit and push to github -> pull down to
+rtp_prod2 -> run production.
+
+* AIRS
+- find (or build) appropriate ini file (see examples in
+  rtp_prod2/airs/config or rtp_config/rtp/airs)
+- build driver list of file paths
+  - for allfov, this is paths directly to each granule (e.g. ls -1
+    /asl/data/airs/L1C_v672/2018/012/*.hdf)
+  - for daily, paths to each doy (e.g. ls -1d /asl/data/airs/L1C_v672/2018/* for a year) 
+- in rtp_prod2/airs/scripts, run sbatch with the appropriate run*.sh
+  script (e.g. for clear: sbatch --array=0-N
+  run_airicrad_clear_day_batch.sh <path-to-ini-file> where 'N' is the
+  number of lines in the driver file-1)
+
+* CrIS
+- find (or build) appropriate ini file (see examples in
+  rtp_prod2/cris/config or rtp_config/rtp/cris)
+- build driver list of file paths
+  - for allfov, this is paths directly to each granule (e.g. ls -1
+    /asl/cris/ccast/sdr45_npp_HR/2018/104/*.mat)
+  - for daily, paths to each doy (e.g. ls -1d /asl/cris/ccast/sdr45_npp_HR/2018/* for a year) 
+- in rtp_prod2/cris/scripts, run sbatch with the appropriate run*.sh
+  script (e.g. for clear: sbatch --array=0-N
+  run_cris_hr_clear_day_batch.sh <path-to-ini-file> where 'N' is the
+  number of lines in the driver file-1)
+
+
+* IASI
+- batch_iasi_rtp('2018/01', 'clear')
+  - builds two files in ./run: 
+    - *.slurm  sbatch commands
+    - *_drv.mat  list of dates within month
+
+- sbatch batch_iasi1_201801_clear_rtp.slurm 
+  - sbatch --array=1-5 batch_iasi1_201801_clear_rtp.slurm   to run just a couple
+  - sbatch --array=1,2,6,7-9 batch_iasi1_201801_clear_rtp.slurm  to run fill-ins
+  - sbatch --time=09:00:00 batch_iasi1_201801_clear_rtp.slurm to adjust run time request
+  - rtp files output to /asl/rtp/rtp_iasi1 tree (path hardcoded in run_iasi1_rtp.m)
+
+* future development
+After running through several permutations of trying to optimize
+runtimes and filesizes for different flavors of rtp production while trying to keep
+the codebase maintainable, I'd recommend the following for future growth:
+- have only one baseline rtp generation function: allfov
+  - all data gets processed the same way and there is no chance of
+    baseline processing changes NOT making it into one flavor or
+    another
+- ALL settable/editable parameters (sarta/klayers executable paths,
+  sarta options, etc) should be pulled out to the configuration files
+  and shoult NOT have default behavior in the code. If a configuration
+  key is not defined, processing should fail (hopefully with a note
+  indicating why).
+- clear/random/site/dcc are then filters atop allfov. Once this is
+  done, I would go one step further and just process all flavors in a
+  run (but could have a configuration key to select one or more but
+  not all). bitfields or an index list for each flavor separate out
+  the flavors for storage. This will make the filter code cleaner and
+  easier to maintain and test.
+- These changes are, I think, all very useful if the intermediate rtp
+  storage stage is to be eliminated. With allfov being run underneath,
+  running stats tallies will have the maximal information and will
+  consume a more minimal memory profile on the cluster during
+  processing.

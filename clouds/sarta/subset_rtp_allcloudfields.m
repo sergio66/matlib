@@ -39,6 +39,13 @@ function [head, prof]=subset_rtp_allcloudfields(headin, profin, glist, clist, pl
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% if isfield(profin,'throughOEMsequentialsteps')
+%   profin = rmfield(profin,'throughOEMsequentialsteps');
+% end
+% if isfield(profin,'iaSaveCovFac')
+%   profin = rmfield(profin,'iaSaveCovFac');
+% end
+
 if length(clist) == 0 & length(glist) == 0 & length(plist) == 0
   %% sent in empty list, so just send back empty list!!!!
   %% this is different than what subset_rtp does, which sends back entire profile (with adjusts due to glist and/or clist);
@@ -526,23 +533,27 @@ if length(fieldsIN) ~= length(fieldsOUT)
       end
       str = ['blah = profin.' fieldsIN{bad(ii)} ';'];
       eval(str);
-      [mm,nn] = size(blah);
-      if mm == 1
-        %% this is like eg p.stemp = 1 x N ---> 1 x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indp);'];
-        eval(str)
-      elseif mm <= 101
-        %% this is like eg p.gas_1 = L x N ---> L x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];         
-        eval(str)
-      elseif mm == headin.nchan
-        %% this is like eg p.robs1 = L x N ---> L x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];
-        eval(str)
-      elseif mm > 101 & mm < headin.nchan
-        %% this is like eg p.rcalc_OEMinitialization and p.airs_noiseT = L x N ---> L x M
-        str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];
-        eval(str)
+      if ~isstruct(blah)
+        [mm,nn] = size(blah);
+        if mm == 1
+          %% this is like eg p.stemp = 1 x N ---> 1 x M
+          str = ['prof.' fieldsIN{bad(ii)} ' = blah(indp);'];
+          eval(str)
+        elseif mm <= 101
+          %% this is like eg p.gas_1 = L x N ---> L x M
+          str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];         
+          eval(str)
+        elseif mm == headin.nchan
+          %% this is like eg p.robs1 = L x N ---> L x M
+          str = ['prof.' fieldsIN{bad(ii)} ' = blah(indc,indp);'];
+          eval(str)
+        elseif mm > 101 & mm < headin.nchan
+          %% this is like eg p.rcalc_OEMinitialization and p.airs_noiseT = L x N ---> L x M
+          str = ['prof.' fieldsIN{bad(ii)} ' = blah(:,indp);'];
+          eval(str)
+        end
+      else
+        fprintf(1,'  >>> subset_rtp_allcloudfields.m : %s is a struct, not subsetting \n',fieldsIN{bad(ii)})
       end
     end
     if (iQuiet < 0)

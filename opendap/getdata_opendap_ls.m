@@ -10,7 +10,7 @@ if(url(end) ~= '/')
     url = [url '/'];
 end
 
-disp(['url_ls ' url])
+disp(['getdata_opendap_ls.m : url_ls ' url])
 
 g = urlread(url);
 results = regexpi(g,'[a-z0-9-_.]*.hdf.info','match');

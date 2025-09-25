@@ -57,8 +57,13 @@ function varargout = getdata_opendap(url, field)
 % Fetch data from OpenDap site
 
   t = mktemp();
-  disp([url '.dods?' field])
-  urlwrite([url '.dods?' field],t);
+  %% -rw-rwxr-- 1 sergio pi_strow 7434 Feb  3  2016 getdata_opendap.m
+  %disp([url '.dods?' field])
+  %urlwrite([url '.dods?' field],t);
+
+  %% July 2025
+  disp([url '?dap4.ce=/' field])
+  urlwrite([url '?dap4.ce=/' field],t);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

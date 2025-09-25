@@ -1,0 +1,4 @@
+cp -aR ../rtp_prod2_sbuczkowski/* .
+
+## this way you do not copy .gitignore or .git
+

@@ -118,13 +118,25 @@ elseif narginx == 5
     if length(p0.stemp) > length(run_sarta.co2ppm)
       disp('warning : length(p0.stemp) > length(run_sarta.co2ppm) so prof_add_co2.m will use the mean(p0.co2ppm)')
     end
+
+    if isfield(p,'gas_2')
+      if length(intersect(h.glist,2)) == 1
+	disp('aha, found p.gas_2(z) and h.glist(2) as well')
+      elseif length(intersect(h.glist,2)) == 0
+	error('hmm, found p.gas_2(z) as well but no h.glist(2)')
+      end
+    end
+    
   elseif ~isfield(run_sarta,'co2ppm')
     if ~isfield(p0,'co2ppm')
       disp('run_sarta does not contain co2ppm, and input prof structure does not contain co2ppm ... set run_sarta.co2ppm = 385');
       run_sarta.co2ppm = 385 * ones(size(p0.stemp));
-    elseif isfield(p0,'co2ppm')
+    elseif isfield(p0,'gas_2')
+      disp('run_sarta does not contain co2ppm, but input prof structure does contain gas_2 ... set run_sarta.co2ppm = +9999');
+      run_sarta.co2ppm = 9999;
+    elseif isfield(p0,'co2ppm') & ~isfield(p0,'gas_2')
       if length(p0.co2ppm) == length(p0.stemp)
-        disp('run_sarta does not contain co2ppm, but input prof structure does contain co2ppm ... set run_sarta.co2ppm = prof0.co2ppm');
+        disp('run_sarta does not contain co2ppm, but input prof structure does contain co2ppm and does not contain gas_2 ... set run_sarta.co2ppm = prof0.co2ppm');
         run_sarta.co2ppm = p0.co2ppm;
       elseif length(p0.co2ppm) < length(p0.stemp)
         error('run_sarta does not contain co2ppm, but input prof structure does contain a few values of co2ppm ... set run_sarta.co2ppm = [prof0.co2ppm  mean(prof0.co2ppm)*remaining]');

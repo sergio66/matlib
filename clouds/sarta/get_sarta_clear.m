@@ -42,10 +42,15 @@ if ~exist(sarta,'file')
   error('sarta cloud exec done not exist')
 end
 
-fip = mktempS('temp.ip.rtp');
-fop = mktempS('temp.op.rtp');
-frp = mktempS('temp.rp.rtp');
-ugh = mktempS('ugh');
+%fip = mktempS('temp.ip.rtp');
+%fop = mktempS('temp.op.rtp');
+%frp = mktempS('temp.rp.rtp');
+%ugh = mktempS('ugh');
+
+fip = mktemp('temp.ip.rtp');
+fop = mktemp('temp.op.rtp');
+frp = mktemp('temp.rp.rtp');
+ugh = mktemp('ugh');
 
 rtpwrite(fip,h,ha,prof,pa);
 %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in get_sarta_clear.m : min/max rlon  min.max rlat')
@@ -61,18 +66,25 @@ catch me
   error('woof! try again!')
 end
 
-sartaer = ['!' sarta ' fin=' fop ' fout=' frp ' >& ' ugh];
+sartaer = ['!' sarta ' fin=' fop ' fout=' frp ' >& ' ugh2];
   eval(sartaer);
 try
   [headRX2 hattrR2 profRX2 pattrR2] = rtpread(frp);
 catch me
   me
-  fprintf(1,'oops : error running sarta clear, look at error log %s \n',ugh);
+  %fprintf(1,'oops : error running sarta clear, look at error log %s \n',ugh);
   %keyboard
+  disp('in get_sarta_clear.m')
+  which mktemp
+  which get_sarta_clear
+  fprintf(1,'oops : error running sarta clear, look at ip/op rtp files %s %s \n',fip,fop)
+  fprintf(1,'oops : error running sarta clear, look at error log - here is a snapshot %s \n',ugh2);
+  morer = ['!more ' ugh2];
+  eval(morer)    
   error('woof! try again!')
 end
 
-rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh]; eval(rmer);
+rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh ' ' ugh2]; eval(rmer);
 
 toc
 

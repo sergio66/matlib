@@ -20,11 +20,17 @@ if ~exist(sarta,'file')
   error('sarta cloud exec done not exist')
 end
 
-fip = mktempS('temp.ip.rtp');
-fop = mktempS('temp.op.rtp');
-frp = mktempS('temp.rp.rtp');
-ugh1 = mktempS('ugh1');
-ugh2 = mktempS('ugh2');
+%fip = mktempS('temp.ip.rtp');
+%fop = mktempS('temp.op.rtp');
+%frp = mktempS('temp.rp.rtp');
+%ugh1 = mktempS('ugh1');
+%ugh2 = mktempS('ugh2');
+
+fip = mktemp('temp.ip.rtp');
+fop = mktemp('temp.op.rtp');
+frp = mktemp('temp.rp.rtp');
+ugh1 = mktemp('ugh1');
+ugh2 = mktemp('ugh2');
 
 %{
 %% sometimes the files get toooooo large
@@ -70,6 +76,9 @@ try
 catch me
   iBad = +1;
   me
+  disp('in get_sarta_cloud.m')  
+  which mktemp
+  which get_sarta_cloud
   fprintf(1,'oops : error running sarta cloudy, look at ip/op rtp files %s %s \n',fip,fop)
   fprintf(1,'oops : error running sarta cloudy, look at error log %s \n',ugh2);
   lser   = ['!ls -lth ' fip ' ' fop]; eval(lser);

@@ -51,6 +51,7 @@ fip = mktemp('temp.ip.rtp');
 fop = mktemp('temp.op.rtp');
 frp = mktemp('temp.rp.rtp');
 ugh = mktemp('ugh');
+ugh2 = mktemp('ugh2');
 
 rtpwrite(fip,h,ha,prof,pa);
 %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in get_sarta_clear.m : min/max rlon  min.max rlat')

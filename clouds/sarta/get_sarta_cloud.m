@@ -23,13 +23,13 @@ end
 %fip = mktempS('temp.ip.rtp');
 %fop = mktempS('temp.op.rtp');
 %frp = mktempS('temp.rp.rtp');
-%ugh1 = mktempS('ugh1');
+%ugh = mktempS('ugh');
 %ugh2 = mktempS('ugh2');
 
 fip = mktemp('temp.ip.rtp');
 fop = mktemp('temp.op.rtp');
 frp = mktemp('temp.rp.rtp');
-ugh1 = mktemp('ugh1');
+ugh = mktemp('ugh');
 ugh2 = mktemp('ugh2');
 
 %{
@@ -65,7 +65,7 @@ fprintf(1,'removed pcrtm \n')
 %}
 
 rtpwrite(fip,h,ha,prof,pa);
-klayerser = ['!' klayers ' fin=' fip ' fout=' fop ' >& ' ugh1];
+klayerser = ['!' klayers ' fin=' fip ' fout=' fop ' >& ' ugh];
   eval(klayerser);
 
 iBad = -1;
@@ -88,7 +88,7 @@ catch me
 end
   
 if iBad < 0
-  rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh1 ' ' ugh2]; eval(rmer);
+  rmer = ['!/bin/rm ' fip ' ' fop ' ' frp ' ' ugh ' ' ugh2]; eval(rmer);
 end
 
 hlayers = headRX2;

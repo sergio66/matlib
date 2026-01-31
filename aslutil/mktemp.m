@@ -72,7 +72,15 @@ end
     namePrefix = TempDir;
     TempDir = dirname(TempDir);
     if strcmp(TempDir,'.')
-      TempDir = getenv('TMPDIR');
+      TempDir = getenv('TMPDIR');          %% orig code
+      TempDir = getenv('JOB_SCRATCH_DIR'); %% newer code      
+      if(isdir('/scratch'))                %%% new Jan 2026
+        [status, cmdout] = system('echo $SLURM_JOB_ID');
+        if ~isempty(cmdout) && cmdout(end) == char(10)
+          cmdout(end) = [];
+        end
+        TempDir = ['/scratch/' cmdout '/'];
+      end
     end
   elseif(~ isdir(TempDir) && isempty(AlternateDir))
     disp(['Warning: ' TempDir ' does not exist, using alternate temporary directory'])
@@ -121,9 +129,9 @@ new directory in /scratch on your own. Hope this helps!
 use      echo $SLURM_JOB_ID
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-  
+
   % verify that the directory given is a valid location
-  if(~ isdir(TempDir)) % if the directory does not exist, choose another
+  if(~isdir(TempDir)) % if the directory does not exist, choose another
     if(isdir('/scratch'))    %%% new Jan 2026
       [status, cmdout] = system('echo $SLURM_JOB_ID');
       if ~isempty(cmdout) && cmdout(end) == char(10)
@@ -138,7 +146,7 @@ use      echo $SLURM_JOB_ID
       error('MKTEMP:  No temporary folder found on system')
     end
   end
-
+  
   if strcmp(TempDir(1:min(end,8)),'/dev/shm') & ~isempty(getenv('SHMDIR'))
     TempDir = getenv('SHMDIR');
   elseif strcmp(TempDir,'/tmp') & ~isempty(getenv('TMPDIR'))

@@ -32,6 +32,10 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% disp('inside driver_sarta_cloud_rtp.m --> main_compute_sarta_rads.m');
+% which get_sarta_clear
+% which get_sarta_cloud
+
 if run_sarta.clear > 0 
   disp('running SARTA clear, saving into rclearcalc')
   %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in main_compute_sarta_rads.m : min/max rlon  min.max rlat')

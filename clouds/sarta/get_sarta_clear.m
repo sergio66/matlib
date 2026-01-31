@@ -47,11 +47,17 @@ end
 %frp = mktempS('temp.rp.rtp');
 %ugh = mktempS('ugh');
 
+%disp('inside /umbc/rs/pi_sergio/WorkDirDec2025/sergio_matlib/matlib/clouds/sarta/get_sarta_clear.m calling mktemp')
 fip = mktemp('temp.ip.rtp');
 fop = mktemp('temp.op.rtp');
 frp = mktemp('temp.rp.rtp');
 ugh = mktemp('ugh');
 ugh2 = mktemp('ugh2');
+
+%disp(' ')
+%disp('inside /umbc/rs/pi_sergio/WorkDirDec2025/sergio_matlib/matlib/clouds/sarta/get_sarta_clear.m')
+%which mktemp
+%fprintf(1,'\n fip = %s \n ugh = %s \n',fip,ugh);
 
 rtpwrite(fip,h,ha,prof,pa);
 %printarray([min(prof.rlon) max(prof.rlon) min(prof.rlat) max(prof.rlat)],'in get_sarta_clear.m : min/max rlon  min.max rlat')

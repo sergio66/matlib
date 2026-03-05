@@ -41,6 +41,7 @@ clear k k1 k2
 loader = ['load ' set_path_to_danz '/iasi_f.mat'];
 eval(loader)
 
+fiasi = 645: 0.25 : 2760;
 efreq = fiasi(efreqi);
 
 % Only ask emis_danz for land emissivities, any fraction
@@ -81,7 +82,8 @@ lmix = (prof.landfrac > 0 & prof.landfrac < 1 );
 for ifov = find(lmix)
   lf = prof.landfrac(ifov);
   of = 1-lf;
-  sea_emis_on_landgrid = interp1(efreq,prof.emis(:,ifov),efreq,'linear');
+  %sea_emis_on_landgrid = interp1(efreq,prof.emis(:,ifov),efreq,'linear');
+  sea_emis_on_landgrid = interp1(sea_efreq,prof.emis(1:sea_nemis,ifov),efreq,'linear')';
   prof.emis(:, ifov) = single(of*sea_emis_on_landgrid + lf*prof.emis(:,ifov));
 end
 

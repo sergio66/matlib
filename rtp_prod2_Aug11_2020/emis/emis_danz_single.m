@@ -33,7 +33,7 @@ end
 % Expand with basis vectors u
 % First, find id's of IASI channels we will use; hard-code later?
 % load /asl/rta/iremis/danz/iasi_f
-loader = ['load ' set_path_to_danz '/iasi_f.mat']
+loader = ['load ' set_path_to_danz '/iasi_f.mat'];
 eval(loader)
 
 [ichan, ~] = seq_match(fiasi,efreq);

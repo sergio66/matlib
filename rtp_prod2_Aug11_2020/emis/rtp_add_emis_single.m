@@ -37,7 +37,7 @@ clear k k1 k2
 
 % rtp need frequencies for these channels
 % load /asl/rta/iremis/danz/iasi_f
-loader = ['load ' set_path_to_danz '/iasi_f.mat']
+loader = ['load ' set_path_to_danz '/iasi_f.mat'];
 eval(loader)
 efreq = fiasi(efreqi);
 
